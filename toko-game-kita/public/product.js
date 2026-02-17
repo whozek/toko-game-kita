@@ -1,4 +1,4 @@
-const products = [
+const allProducts = [
     { 
         id: 1, 
         name: "VIP + LUCK", 
@@ -153,4 +153,4 @@ const products = [
     },
 ];
 
-window.gameProducts = products;
+window.allProducts = allProducts;
