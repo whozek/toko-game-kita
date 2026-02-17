@@ -7,7 +7,7 @@ const products = [
         disc: "21%", 
         img: "https://placehold.co/300x300/1a1b3a/white?text=Gun",
         stock: "In Stock",
-        category: "FISH IT" // Tambah ini
+        category: "FISH IT", // Tambah ini
         isRate: true
     },
     { 
@@ -18,7 +18,7 @@ const products = [
         disc: "12%", 
         img: "https://placehold.co/300x300/1a1b3a/white?text=Knife",
         stock: "In Stock",
-        category: "FISH IT"
+        category: "FISH IT",
         isRate: true
     },
     { 
@@ -29,7 +29,7 @@ const products = [
         disc: "25%", 
         img: "https://placehold.co/300x300/1a1b3a/white?text=Pet",
         stock: "In Stock",
-        category: "FISH IT"
+        category: "FISH IT",
         isRate: true
     },
     { 
@@ -40,7 +40,7 @@ const products = [
         disc: "25%", 
         img: "https://placehold.co/300x300/1a1b3a/white?text=Pet",
         stock: "In Stock",
-        category: "FISH IT"
+        category: "FISH IT",
         isRate: true
     },
     { 
@@ -51,7 +51,7 @@ const products = [
         disc: "25%", 
         img: "https://placehold.co/300x300/1a1b3a/white?text=Pet",
         stock: "In Stock",
-        category: "FISH IT"
+        category: "FISH IT",
         isRate: true
     },
     { 
@@ -62,7 +62,7 @@ const products = [
         disc: "25%", 
         img: "https://placehold.co/300x300/1a1b3a/white?text=Pet",
         stock: "In Stock",
-        category: "FISH IT"
+        category: "FISH IT",
         isRate: true
     },
     { 
@@ -73,7 +73,7 @@ const products = [
         disc: "25%", 
         img: "https://placehold.co/300x300/1a1b3a/white?text=Pet",
         stock: "In Stock",
-        category: "FISH IT"
+        category: "FISH IT",
         isRate: true
     },
     { 
@@ -84,7 +84,7 @@ const products = [
         disc: "25%", 
         img: "https://placehold.co/300x300/1a1b3a/white?text=Pet",
         stock: "In Stock",
-        category: "FISH IT"
+        category: "FISH IT",
         isRate: true
     },
     { 
@@ -95,7 +95,7 @@ const products = [
         disc: "25%", 
         img: "https://placehold.co/300x300/1a1b3a/white?text=Pet",
         stock: "In Stock",
-        category: "FISH IT"
+        category: "FISH IT",
         isRate: true
     },
     { 
@@ -106,7 +106,7 @@ const products = [
         disc: "25%", 
         img: "https://placehold.co/300x300/1a1b3a/white?text=Pet",
         stock: "In Stock",
-        category: "REDFINGER"
+        category: "REDFINGER",
         isRate: false
     },
     { 
@@ -117,7 +117,7 @@ const products = [
         disc: "25%", 
         img: "https://placehold.co/300x300/1a1b3a/white?text=Pet",
         stock: "In Stock",
-        category: "REDFINGER"
+        category: "REDFINGER",
         isRate: false
     },
 ];
