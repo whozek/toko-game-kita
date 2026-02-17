@@ -48,52 +48,123 @@
         </div>
 </main>
 
+    <div id="orderModal" class="fixed inset-0 bg-black bg-opacity-80 z-[100] hidden flex items-center justify-center p-4">
+        <div class="bg-[#1a1b3a] w-full max-w-sm rounded-2xl p-6 border border-gray-700 shadow-2xl">
+            <h2 class="text-xl font-bold text-white mb-4 flex items-center">
+                <i class="fas fa-gift mr-2 text-red-500"></i> Maklumat Order
+            </h2>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="text-[10px] text-gray-400 uppercase font-bold">Username Roblox</label>
+                    <input type="text" id="robloxUser" placeholder="Masukkan username..." class="w-full bg-[#0f1021] border border-gray-700 rounded-lg p-2 text-white text-sm focus:border-red-500 outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-[10px] text-gray-400 uppercase font-bold">Jumlah Robux</label>
+                        <input type="number" id="robuxAmount" oninput="calculatePrice()" placeholder="0" class="w-full bg-[#0f1021] border border-gray-700 rounded-lg p-2 text-white text-sm focus:border-red-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="text-[10px] text-gray-400 uppercase font-bold">Harga Total</label>
+                        <input type="text" id="orderPrice" readonly class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-yellow-500 font-bold text-sm outline-none">
+                    </div>
+                </div>
+                <div>
+                    <label class="text-[10px] text-gray-400 uppercase font-bold">Nama Map</label>
+                    <input type="text" id="mapName" placeholder="Contoh: MM2 / Fisch" class="w-full bg-[#0f1021] border border-gray-700 rounded-lg p-2 text-white text-sm focus:border-red-500 outline-none">
+                </div>
+            </div>
+
+            <div class="flex space-x-2 mt-6">
+                <button onclick="closeOrderModal()" class="flex-1 py-2 rounded-lg text-gray-400 font-bold text-sm bg-gray-800">Batal</button>
+                <button onclick="sendWhatsAppOrder()" class="flex-[2] py-2 rounded-lg text-white font-bold text-sm bg-red-600 hover:bg-red-500">Hantar WhatsApp</button>
+            </div>
+        </div>
+    </div>
+
     <script src="product.js"></script>
 
-<script>
-    function filterCategory(cat) {
-        // Guna currentTarget supaya emoji dalam butang tak kacau
-        document.querySelectorAll('.cat-btn').forEach(btn => {
-            btn.classList.remove('bg-red-600');
-            btn.classList.add('bg-gray-800');
-        });
-        
-        event.currentTarget.classList.remove('bg-gray-800');
-        event.currentTarget.classList.add('bg-red-600');
+    <script>
+        // TETAPKAN RATE DI SINI
+        const RATE_ROBUX = 0.023; 
+        let currentSelectedItem = "";
 
-        displayGames(cat);
-    }
-
-    function displayGames(filter = 'ALL') {
-        const list = document.getElementById('game-list');
-        if (!list) return;
-
-        // Ambil data dari window.gameProducts (Pastikan dalam product.js ada baris ini)
-        const allProducts = window.gameProducts || [];
-        
-        const filtered = filter === 'ALL' 
-            ? allProducts 
-            : allProducts.filter(p => p.category === filter);
-
-        if (filtered.length === 0) {
-            list.innerHTML = "<p class='text-center col-span-2 text-gray-500'>Tiada produk dalam kategori ini.</p>";
-            return;
+        function calculatePrice() {
+            const robuxInput = document.getElementById('robuxAmount');
+            const priceInput = document.getElementById('orderPrice');
+            const jumlahRobux = parseFloat(robuxInput.value) || 0;
+            const totalHarga = jumlahRobux * RATE_ROBUX;
+            priceInput.value = "RM " + totalHarga.toFixed(2);
         }
 
-        list.innerHTML = filtered.map(game => `
-            <div class="game-card rounded-2xl overflow-hidden p-3 shadow-lg" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);">
-                <img src="${game.img}" class="w-full h-24 object-contain my-2">
-                <h3 class="text-[11px] font-medium mb-1 truncate text-gray-300">${game.name}</h3>
-                <div class="text-sm font-bold text-white italic mb-2">RM ${game.price.toFixed(2)}</div>
-                <button onclick="window.open('https://wa.me/60167481645?text=Nak%20beli%20${game.name}')" class="w-full bg-red-600 py-1.5 rounded-lg text-[10px] font-bold uppercase text-white hover:bg-red-500 transition">Buy Now</button>
-            </div>
-        `).join('');
-    }
+        function openOrderModal(itemName) {
+            currentSelectedItem = itemName;
+            document.getElementById('orderModal').classList.remove('hidden');
+        }
 
-    // WAJIB ADA: Panggil fungsi ini bila window dah siap load
-    window.onload = () => {
-        displayGames('ALL');
-    };
-</script>
+        function closeOrderModal() {
+            document.getElementById('orderModal').classList.add('hidden');
+        }
+
+        function sendWhatsAppOrder() {
+            const user = document.getElementById('robloxUser').value;
+            const robux = document.getElementById('robuxAmount').value;
+            const price = document.getElementById('orderPrice').value;
+            const map = document.getElementById('mapName').value;
+
+            if(!user || !robux || !map) {
+                alert("Sila isi semua maklumat!");
+                return;
+            }
+
+            const noWasap = "60167481645"; 
+            const mesej = `*PESANAN GIFT IN-GAME*%0A` +
+                          `--------------------------%0A` +
+                          `*Item:* ${currentSelectedItem}%0A` +
+                          `*Username:* ${user}%0A` +
+                          `*Jumlah Robux:* ${robux}%0A` +
+                          `*Map:* ${map}%0A` +
+                          `*Total Harga:* ${price}%0A` +
+                          `--------------------------%0A` +
+                          `Sila proses pesanan saya.`;
+
+            window.open(`https://wa.me/${noWasap}?text=${mesej}`, '_blank');
+            closeOrderModal();
+        }
+
+        function filterCategory(cat) {
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                btn.classList.remove('bg-red-600');
+                btn.classList.add('bg-gray-800');
+            });
+            event.currentTarget.classList.remove('bg-gray-800');
+            event.currentTarget.classList.add('bg-red-600');
+            displayGames(cat);
+        }
+
+        function displayGames(filter = 'ALL') {
+            const list = document.getElementById('game-list');
+            if (!list) return;
+
+            const allProducts = window.gameProducts || [];
+            const filtered = filter === 'ALL' ? allProducts : allProducts.filter(p => p.category === filter);
+
+            if (filtered.length === 0) {
+                list.innerHTML = "<p class='text-center col-span-2 text-gray-500'>Tiada produk.</p>";
+                return;
+            }
+
+            list.innerHTML = filtered.map(game => `
+                <div class="game-card rounded-2xl overflow-hidden p-3 shadow-lg">
+                    <img src="${game.img}" class="w-full h-24 object-contain my-2">
+                    <h3 class="text-[11px] font-medium mb-1 truncate text-gray-300">${game.name}</h3>
+                    <div class="text-sm font-bold text-white italic mb-2 text-red-500">Rate: RM${RATE_ROBUX}</div>
+                    <button onclick="openOrderModal('${game.name}')" class="w-full bg-red-600 py-1.5 rounded-lg text-[10px] font-bold uppercase text-white hover:bg-red-500 transition">Buy Now</button>
+                </div>
+            `).join('');
+        }
+
+        window.onload = () => { displayGames('ALL'); };
+    </script>
 </body>
 </html>
