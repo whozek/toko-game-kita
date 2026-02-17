@@ -247,16 +247,36 @@ function closeVariantModal() {
 // Kemaskini butang dalam displayGames
 function displayGames(filter = 'ALL') {
     const list = document.getElementById('game-list');
-    const filtered = filter === 'ALL' ? allProducts : allProducts.filter(p => p.category === filter);
+    if (!list) return;
+
+    // Ambil data dari window.allProducts
+    const data = window.allProducts || [];
+    
+    const filtered = filter === 'ALL' 
+        ? data 
+        : data.filter(p => p.category === filter);
+
+    if (filtered.length === 0) {
+        list.innerHTML = "<p class='text-center col-span-2 text-gray-500 py-10'>Tiada produk dalam kategori ini.</p>";
+        return;
+    }
 
     list.innerHTML = filtered.map(game => {
-        const action = game.isVariant ? `openVariantModal(${game.id})` : (game.isRate ? `openOrderModal('${game.name}')` : `window.open(...)`);
-        
+        // Tentukan apa butang buat
+        let action;
+        if (game.isVariant) {
+            action = `openVariantModal(${game.id})`;
+        } else if (game.isRate) {
+            action = `openOrderModal('${game.name}')`;
+        } else {
+            action = `window.open('https://wa.me/60167481645?text=Nak%20beli%20${game.name}')`;
+        }
+
         return `
-            <div class="game-card rounded-2xl p-3 shadow-lg text-center">
-                <img src="${game.img}" class="w-20 h-20 mx-auto my-2 object-contain">
-                <h3 class="text-xs font-bold text-gray-300 mb-3">${game.name}</h3>
-                <button onclick="${action}" class="w-full bg-red-600 py-2 rounded-lg text-[10px] font-bold uppercase text-white">
+            <div class="game-card rounded-2xl overflow-hidden p-3 shadow-lg text-center border border-gray-800">
+                <img src="${game.img}" class="w-full h-24 object-contain my-2">
+                <h3 class="text-[12px] font-bold mb-3 text-gray-200">${game.name}</h3>
+                <button onclick="${action}" class="w-full bg-red-600 py-2 rounded-lg text-[10px] font-bold uppercase text-white hover:bg-red-500 transition shadow-lg shadow-red-900/20">
                     ${game.isVariant ? 'See Variants' : 'Buy Now'}
                 </button>
             </div>
