@@ -3,7 +3,6 @@ const allProducts = [
         id: 111, 
         name: "FISH IT",
         img: "https://placehold.co/300x300/1a1b3a/white?text=Gun",
-        stock: "In Stock",
         category: "FISH IT", // Tambah ini
         isVariant: true, // Penanda baru
         variants: [
@@ -26,7 +25,7 @@ const allProducts = [
         isVariant: true,
         variants: [
             { name: "7 Day - Code", price: 7, isRate: false },
-            { name: "30 Day - Code", price: 17, isRate: false },
+            { name: "30 Day - Code", price: 17, isRate: false }
         ]
     },
 ];
