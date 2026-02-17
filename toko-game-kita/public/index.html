@@ -7,6 +7,11 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        body { background-color: #0f1021; }
+        .game-card { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .discount-tag { background: #22c55e; color: white; font-size: 10px; font-weight: bold; }
+        .popular-tag { background: #ef4444; color: white; font-size: 10px; font-weight: bold; }
+        
         /* Container utama untuk tulisan bergerak */
         .marquee-container {
             width: 100%;
@@ -37,10 +42,6 @@
             100% { transform: translate(-100%, 0); }
         }
 
-        body { background-color: #0f1021; }
-        .game-card { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .discount-tag { background: #22c55e; color: white; font-size: 10px; font-weight: bold; }
-        .popular-tag { background: #ef4444; color: white; font-size: 10px; font-weight: bold; }
         
     @keyframes glow {
         0%, 100% { text-shadow: 0 0 5px #ff0000, 0 0 10px #ff4d00; }
