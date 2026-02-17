@@ -209,18 +209,30 @@
         const data = window.allProducts || [];
         const filtered = filter === 'ALL' ? data : data.filter(p => p.category === filter);
 
-        list.innerHTML = filtered.map(game => {
-            const action = game.isVariant ? `openVariantModal(${game.id})` : `openOrderModal('${game.name}')`;
+                list.innerHTML = filtered.map(game => {
+            let action = game.isVariant ? `openVariantModal(${game.id})` : `openOrderModal('${game.name}')`;
+
             return `
-                <div class="game-card rounded-2xl p-3 text-center border border-gray-800">
-                    <img src="${game.img}" class="w-full h-20 object-contain mb-2">
-                    <h3 class="text-[10px] font-bold text-gray-300 mb-2">${game.name}</h3>
-                    <button onclick="${action}" class="w-full bg-red-600 py-2 rounded-lg text-[10px] font-bold text-white uppercase">
-                        ${game.isVariant ? 'See Variants' : 'Order Now'}
+                <div class="game-card group rounded-3xl p-4 text-center">
+                    ${game.disc ? `<span class="absolute top-3 left-3 bg-green-500 text-[9px] font-black px-2 py-1 rounded-lg z-10 shadow-lg italic">OFF ${game.disc}</span>` : ''}
+            
+                    <div class="relative mb-4">
+                        <img src="${game.img}" class="w-full h-28 object-contain z-10 relative">
+                        <div class="absolute inset-0 bg-red-600/10 blur-3xl rounded-full scale-50 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    </div>
+
+                    <h3 class="text-xs font-black mb-4 text-gray-100 tracking-wide uppercase italic leading-tight h-8 flex items-center justify-center">
+                        ${game.name}
+                    </h3>
+
+                    <button onclick="${action}" class="btn-glow w-full bg-red-600 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest text-white transition-all">
+                        ${game.isVariant ? 'See Variants' : 'Buy Now'}
                     </button>
-                </div>`;
+                </div>
+            `;
         }).join('');
-    }
+
+        }
 
     function openVariantModal(id) {
         const product = window.allProducts.find(p => p.id === id);
