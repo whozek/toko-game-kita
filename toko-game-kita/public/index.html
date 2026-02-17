@@ -146,18 +146,20 @@
             const initialPrice = isRate ? (amount * RATE_PER_ROBUX).toFixed(2) : amount.toFixed(2);
             document.getElementById('orderModal').innerHTML = `
                 <div class="bg-[#0f1021] w-full max-w-sm rounded-3xl p-6 border border-white/10 shadow-2xl overflow-y-auto max-h-[90vh]">
-                    <div class="mb-6 bg-white p-3 rounded-2xl"><img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=KZMartMY" class="w-32 h-32 mx-auto"></div>
+                    <div class="mb-6 bg-white p-3 rounded-2xl"><img src="qr-pay.jpg.jpg" class="w-32 h-32 mx-auto"></div>
                     <div class="space-y-4 text-left">
                         <div><label class="text-[10px] text-gray-500 font-black uppercase">Username</label>
-                        <input type="text" id="orderUser" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white outline-none focus:border-red-500" placeholder="User123"></div>
+                        <input type="text" id="orderUser" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white outline-none focus:border-red-500" placeholder="PakAtan789"></div>
                         <div class="grid grid-cols-2 gap-3">
                             <div><label class="text-[10px] text-gray-500 font-black uppercase">Robux</label>
                             <input type="number" id="orderRobux" value="${amount}" oninput="updatePrice(this.value)" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white outline-none focus:border-red-500"></div>
                             <div><label class="text-[10px] text-gray-500 font-black uppercase">Price RM</label>
                             <input type="text" id="orderPrice" value="${initialPrice}" readonly class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-gray-400 font-bold"></div>
                         </div>
+                        <div><label class="text-[10px] text-gray-500 font-black uppercase">Item Name</label>
+                        <input type="text" id="orderItem" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white outline-none focus:border-red-500" placeholder="Skin Rod, VIP PASS"></div>
                         <div><label class="text-[10px] text-gray-500 font-black uppercase">Map Name</label>
-                        <input type="text" id="orderMap" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white outline-none focus:border-red-500" placeholder="Fisch"></div>
+                        <input type="text" id="orderMap" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white outline-none focus:border-red-500" placeholder="Fish It, Blox Fruit"></div>
                         <button onclick="sendWhatsApp('${itemName}')" class="w-full bg-green-600 py-4 rounded-2xl font-black text-white uppercase tracking-widest mt-2">Hantar Order</button>
                         <button onclick="closeOrderModal()" class="w-full text-gray-500 text-[10px] font-bold uppercase mt-2">Batal</button>
                     </div>
@@ -166,14 +168,29 @@
         }
 
         function updatePrice(val) { document.getElementById('orderPrice').value = (val * RATE_PER_ROBUX).toFixed(2); }
-        function sendWhatsApp(item) {
-            const u = document.getElementById('orderUser').value;
-            const r = document.getElementById('orderRobux').value;
-            const p = document.getElementById('orderPrice').value;
-            const m = document.getElementById('orderMap').value;
-            if(!u || !m) return alert("Isi Username & Map!");
-            window.open(`https://wa.me/60167481645?text=*ORDER GIFT*%0AItem: ${item}%0AUser: ${u}%0ARobux: ${r}%0APrice: RM${p}%0AMap: ${m}`);
+        function sendWhatsApp(itemName) {
+        const user = document.getElementById('orderUser').value;
+        const robux = document.getElementById('orderRobux').value;
+        const price = document.getElementById('orderPrice').value;
+        const item = document.getElementById('orderItem').value;
+        const map = document.getElementById('orderMap').value;
+
+        if(!user || !map) {
+            alert("Sila masukkan Username , Nama Item dan Nama Map!");
+            return;
         }
+
+        const msg = `Halo KZMartMY!%0A%0A` +
+                    `*ORDER GIFT IN-GAME*%0A` +
+                    `Jenis: ${itemName}%0A` +
+                    `Username: ${user}%0A` +
+                    `Jumlah Robux: ${robux}%0A` +
+                    `Harga: RM${price}%0A` +
+                    `Nama Item: ${item}` +
+                    `Map: ${map}`;
+        
+        window.open(`https://wa.me/60167481645?text=${msg}`);
+    }
         function closeOrderModal() { document.getElementById('orderModal').classList.add('hidden'); }
         function closeVariantModal() { document.getElementById('variantModal').classList.add('hidden'); }
 
