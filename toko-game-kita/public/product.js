@@ -6,15 +6,15 @@ const allProducts = [
         category: "FISH IT", // Tambah ini
         isVariant: true, // Penanda baru
         variants: [
-            { name: "VIP + LUCK", price: 10.35, isRate: true },
-            { name: "MUTATIONS", price: 6.90, isRate: true },
-            { name: "ADVANCED LUCK", price: 12.65, isRate: true },
-            { name: "EXTRA LUCK", price: 12.65, isRate: true },
-            { name: "SMALL LUCK", price: 12.65, isRate: true },
-            { name: "DOUBLE EXP", price: 12.65, isRate: true },
-            { name: "MINI HOVERBOAT", price: 12.65, isRate: true },
-            { name: "SELL ANYWHERE", price: 12.65, isRate: true },
-            { name: "HYPER BOAT PACK", price: 12.65, isRate: true }
+            { name: "VIP + LUCK", price: , isRate: true },
+            { name: "MUTATIONS", price: , isRate: true },
+            { name: "ADVANCED LUCK", price: , isRate: true },
+            { name: "EXTRA LUCK", price: , isRate: true },
+            { name: "SMALL LUCK", price: , isRate: true },
+            { name: "DOUBLE EXP", price: , isRate: true },
+            { name: "MINI HOVERBOAT", price: , isRate: true },
+            { name: "SELL ANYWHERE", price: , isRate: true },
+            { name: "HYPER BOAT PACK", price: , isRate: true }
         ]
     },
     {
@@ -25,7 +25,9 @@ const allProducts = [
         isVariant: true,
         variants: [
             { name: "7 Day - Code", price: 7, isRate: false },
-            { name: "30 Day - Code", price: 17, isRate: false }
+            { name: "30 Day - Code", price: 17, isRate: false },
+            { name: "7 Day - Siap Pakai", price: 9, isRate: false },
+            { name: "30 Day - Siap Pakai", price: 20, isRate: false }
         ]
     },
     {
