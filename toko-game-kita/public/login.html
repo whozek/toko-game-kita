@@ -42,21 +42,33 @@
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             const msg = document.getElementById('msg');
+            const btn = document.getElementById('btn-text');
+
+            if (!email || !password) {
+                msg.innerText = "Sila isi emel dan password!";
+                return;
+            }
+
+            btn.innerText = "Loading...";
 
             try {
-                // Coba Login
-                await auth.signInWithEmailAndPassword(email, password);
+                // 1. Cuba Login dulu
+                await firebase.auth().signInWithEmailAndPassword(email, password);
                 window.location.href = 'index.html';
             } catch (error) {
-                // Jika user belum ada, coba Sign Up
-                if (error.code === 'auth/user-not-found') {
+                // 2. Jika user tak wujud (error auth/user-not-found atau invalid-credential), cuba daftar baru
+                if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
                     try {
-                        await auth.createUserWithEmailAndPassword(email, password);
-                        alert("Akaun dicipta! Selamat datang.");
-                        window.location.href = 'index.html';
-                    } catch (e) { msg.innerText = e.message; }
+                        await firebase.auth().createUserWithEmailAndPassword(email, password);
+                        alert("Akaun baru berjaya didaftarkan!");
+                       window.location.href = 'index.html';
+                   } catch (signUpError) {
+                        msg.innerText = "Gagal daftar: " + signUpError.message;
+                        btn.innerText = "Login / Sign Up";
+                   }
                 } else {
-                    msg.innerText = error.message;
+                    msg.innerText = "Ralat: " + error.message;
+                    btn.innerText = "Login / Sign Up";
                 }
             }
         }
