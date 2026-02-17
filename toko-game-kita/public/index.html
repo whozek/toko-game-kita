@@ -110,7 +110,8 @@
 
         function logout() { firebase.auth().signOut().then(() => { window.location.href = 'login.html'; }); }
 
-        function displayGames(filter = 'ALL') {
+        // --- 1. Paparan Utama ---
+function displayGames(filter = 'ALL') {
     const list = document.getElementById('game-list');
     const data = window.allProducts || [];
     const filtered = filter === 'ALL' ? data : data.filter(p => p.category === filter);
@@ -119,41 +120,41 @@
         let action;
         
         if (game.isVariant) {
-            // Jika ada varian, pergi ke modal varian dulu
             action = `openVariantModal(${game.id})`;
         } else {
-            // Jika tiada varian, cek jenis (Robux atau Digital)
-            if (game.type === "Robux") {
-                action = `openOrderModal('${game.name}', ${game.price || 0}, ${game.isRate || false})`;
-            } else {
+            // Jika Digital, terus ke WA. Jika Robux, buka Form.
+            if (game.type === "Digital") {
                 action = `window.open('https://wa.me/60167481645?text=Nak%20beli%20${game.name}')`;
+            } else {
+                action = `openOrderModal('${game.name}', ${game.price || 0}, ${game.isRate || false})`;
             }
         }
 
         return `
             <div class="game-card rounded-3xl p-4 text-center relative group">
                 <img src="${game.img}" class="w-full h-24 object-contain mb-3">
-                <h3 class="text-[10px] font-black text-gray-200 mb-4 uppercase italic leading-tight">${game.name}</h3>
-                <button onclick="${action}" class="w-full bg-red-600 py-2.5 rounded-xl text-[9px] font-black text-white uppercase tracking-widest hover:bg-red-500 transition-all">
+                <h3 class="text-[10px] font-black text-gray-200 mb-4 uppercase italic">${game.name}</h3>
+                <button onclick="${action}" class="w-full bg-red-600 py-2.5 rounded-xl text-[9px] font-black text-white uppercase tracking-widest">
                     ${game.isVariant ? 'See Variants' : 'Buy Now'}
                 </button>
             </div>`;
     }).join('');
 }
 
-        function openVariantModal(id) {
+// --- 2. Paparan Dalam Modal Varian ---
+function openVariantModal(id) {
     const product = window.allProducts.find(p => p.id === id);
     document.getElementById('variantTitle').innerText = product.name;
     
     document.getElementById('variantList').innerHTML = product.variants.map(v => {
         const pDisplay = v.isRate ? (v.price * RATE_PER_ROBUX).toFixed(2) : v.price.toFixed(2);
         
-        // Cek jika produk utama adalah jenis Robux
         let clickAction;
-        if (product.type === "Robux") {
-            clickAction = `openOrderModal('${v.name}', ${v.price}, ${v.isRate})`;
-        } else {
+        // Tapis di sini: Jika type produk asal adalah Digital, jangan buka form
+        if (product.type === "Digital") {
             clickAction = `window.open('https://wa.me/60167481645?text=Nak%20beli%20${v.name}%20Harga:%20RM${pDisplay}')`;
+        } else {
+            clickAction = `openOrderModal('${v.name}', ${v.price}, ${v.isRate})`;
         }
 
         return `
@@ -165,6 +166,7 @@
     
     document.getElementById('variantModal').classList.remove('hidden');
 }
+
 
         function openOrderModal(itemName, amount = 0, isRate = false) {
             closeVariantModal();
