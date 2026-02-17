@@ -41,7 +41,16 @@
             0% { transform: translate(0, 0); }
             100% { transform: translate(-100%, 0); }
         }
-
+        
+        .stock-container {
+            background: linear-gradient(90deg, rgba(255,0,0,0.1) 0%, rgba(255,255,255,0.05) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-left: 4px solid #ef4444;
+        }
+        .robux-glow {
+            color: #ffb800;
+            text-shadow: 0 0 10px rgba(255, 184, 0, 0.5);
+        }
         
     @keyframes glow {
         0%, 100% { text-shadow: 0 0 5px #ff0000, 0 0 10px #ff4d00; }
