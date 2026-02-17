@@ -1,4 +1,3 @@
-// Simpan data produk di sini supaya senang edit
 const products = [
     { 
         id: 1, 
