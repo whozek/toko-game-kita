@@ -6,15 +6,15 @@ const allProducts = [
         category: "FISH IT", // Tambah ini
         isVariant: true, // Penanda baru
         variants: [
-            { name: "VIP + LUCK", price: , isRate: true },
-            { name: "MUTATIONS", price: , isRate: true },
-            { name: "ADVANCED LUCK", price: , isRate: true },
-            { name: "EXTRA LUCK", price: , isRate: true },
-            { name: "SMALL LUCK", price: , isRate: true },
-            { name: "DOUBLE EXP", price: , isRate: true },
-            { name: "MINI HOVERBOAT", price: , isRate: true },
-            { name: "SELL ANYWHERE", price: , isRate: true },
-            { name: "HYPER BOAT PACK", price: , isRate: true }
+            { name: "VIP + LUCK", isRate: true },
+            { name: "MUTATIONS", isRate: true },
+            { name: "ADVANCED LUCK", isRate: true },
+            { name: "EXTRA LUCK", isRate: true },
+            { name: "SMALL LUCK", isRate: true },
+            { name: "DOUBLE EXP", isRate: true },
+            { name: "MINI HOVERBOAT", isRate: true },
+            { name: "SELL ANYWHERE", isRate: true },
+            { name: "HYPER BOAT PACK", isRate: true }
         ]
     },
     {
