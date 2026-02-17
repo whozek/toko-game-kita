@@ -12,10 +12,16 @@
         .discount-tag { background: #22c55e; color: white; font-size: 10px; font-weight: bold; }
         .popular-tag { background: #ef4444; color: white; font-size: 10px; font-weight: bold; }
     </style>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 </head>
 <body class="text-gray-200">
 
     <nav class="flex items-center justify-between px-6 py-4 border-b border-gray-800 bg-[#0f1021] sticky top-0 z-50">
+        <div class="flex items-center space-x-3">
+            <span id="user-display" class="text-[10px] text-gray-400"></span>
+            <button onclick="logout()" class="text-xs bg-gray-800 px-3 py-1 rounded-lg">Logout</button>
+        </div>
         <div class="flex items-center space-x-4">
             <h1 class="text-xl font-extrabold text-white uppercase">KZMartMY<span class="text-red-500">STORE</span></h1>
         </div>
@@ -92,6 +98,36 @@
         </div>
     </div>
 </div>
+
+// index.html - Baris 100
+const firebaseConfig = {
+    apiKey: "AIzaSyAzqZNdN2Hq6gq7CqKsBRE7isgXZVFQChU",
+    authDomain: "kzmart-auth.firebaseapp.com",
+    projectId: "kzmart-auth",
+    storageBucket: "kzmart-auth.firebasestorage.app",
+    messagingSenderId: "1084515236820",
+    appId: "1:1084515236820:web:582cb2a5cdb5181b5f9441",
+    measurementId: "G-PV2MFPwMCZ"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+firebase.auth().onAuthStateChanged((user) => {
+    if (!user) {
+        // Jika belum login, tendang ke halaman login
+        window.location.href = 'login.html';
+    } else {
+        console.log("Logged in as:", user.email);
+        // Tampilkan username/email di navbar jika mahu
+        document.getElementById('user-display').innerText = user.email.split('@')[0];
+    }
+});
+
+function logout() {
+    firebase.auth().signOut().then(() => {
+        window.location.href = 'login.html';
+    });
+}
 
     <script src="product.js"></script>
 
