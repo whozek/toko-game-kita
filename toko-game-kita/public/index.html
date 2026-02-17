@@ -11,6 +11,17 @@
         .game-card { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); }
         .discount-tag { background: #22c55e; color: white; font-size: 10px; font-weight: bold; }
         .popular-tag { background: #ef4444; color: white; font-size: 10px; font-weight: bold; }
+        <style>
+    /* ... kod sedia ada anda ... */
+    
+    @keyframes glow {
+        0%, 100% { text-shadow: 0 0 5px #ff0000, 0 0 10px #ff4d00; }
+        50% { text-shadow: 0 0 20px #ff0000, 0 0 30px #ff8800; }
+    }
+    
+    .animate-pulse {
+        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite, glow 2s ease-in-out infinite;
+    }
     </style>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
