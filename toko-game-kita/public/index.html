@@ -120,6 +120,7 @@
 </div>
 
 <script>
+    // 1. Firebase Config
     const firebaseConfig = {
         apiKey: "AIzaSyAzqZNdN2Hq6gq7CqKsBRE7isgXZVFQChU",
         authDomain: "kzmart-auth.firebaseapp.com",
@@ -132,25 +133,54 @@
 
     firebase.initializeApp(firebaseConfig);
 
+    // 2. Auth Guard
     firebase.auth().onAuthStateChanged((user) => {
         if (!user) {
             window.location.href = 'login.html';
         } else {
-            console.log("Logged in as:", user.email);
             const userDisplay = document.getElementById('user-display');
-            if (userDisplay) {
-                userDisplay.innerText = user.email.split('@')[0];
-            }
+            if (userDisplay) userDisplay.innerText = user.email.split('@')[0];
         }
     });
 
-    // Fungsi ini sekarang akan berfungsi kerana berada di dalam tag script
     function logout() {
-        firebase.auth().signOut().then(() => {
-            window.location.href = 'login.html';
-        }).catch((error) => {
-            console.error("Logout Error:", error);
+        firebase.auth().signOut().then(() => { 
+            window.location.href = 'login.html'; 
         });
+    }
+
+    // 3. Fungsi Variant Modal (SANGAT PENTING)
+    function openVariantModal(productId) {
+        // Cari produk dalam window.allProducts
+        const product = window.allProducts.find(p => p.id === productId);
+        if (!product) return;
+
+        const list = document.getElementById('variantList');
+        const title = document.getElementById('variantTitle');
+        
+        title.innerText = product.name;
+        list.innerHTML = product.variants.map(v => `
+            <button onclick="selectVariant('${v.name}', ${v.price}, ${v.isRate})" 
+                class="w-full flex justify-between items-center bg-[#0f1021] border border-gray-700 p-4 rounded-xl hover:border-red-500 transition mb-2 text-left">
+                <span class="text-sm font-medium text-white">${v.name}</span>
+                <span class="text-xs font-bold text-red-500">${v.isRate ? 'Rate' : 'RM'+v.price.toFixed(2)}</span>
+            </button>
+        `).join('');
+        
+        document.getElementById('variantModal's).classList.remove('hidden');
+    }
+
+    function selectVariant(name, price, isRate) {
+        document.getElementById('variantModal').classList.add('hidden');
+        if(isRate) {
+            openOrderModal(name); 
+        } else {
+            window.open(`https://wa.me/60167481645?text=Nak%20beli%20${name}%20Harga:%20RM${price.toFixed(2)}`);
+        }
+    }
+
+    function closeVariantModal() {
+        document.getElementById('variantModal').classList.add('hidden');
     }
 </script>
 
