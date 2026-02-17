@@ -37,7 +37,7 @@ const allProducts = [
         img: "https://placehold.co/300x300/1a1b3a/white?text=Gun",
         isVariant: false,
         isRate: true
-    },
+    }
 ];
 
 window.allProducts = allProducts;
