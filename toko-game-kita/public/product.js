@@ -8,6 +8,7 @@ const products = [
         img: "https://placehold.co/300x300/1a1b3a/white?text=Gun",
         stock: "In Stock",
         category: "FISH IT" // Tambah ini
+        isRate: true
     },
     { 
         id: 2, 
@@ -18,6 +19,7 @@ const products = [
         img: "https://placehold.co/300x300/1a1b3a/white?text=Knife",
         stock: "In Stock",
         category: "FISH IT"
+        isRate: true
     },
     { 
         id: 3, 
@@ -28,6 +30,7 @@ const products = [
         img: "https://placehold.co/300x300/1a1b3a/white?text=Pet",
         stock: "In Stock",
         category: "FISH IT"
+        isRate: true
     },
     { 
         id: 4, 
@@ -38,6 +41,7 @@ const products = [
         img: "https://placehold.co/300x300/1a1b3a/white?text=Pet",
         stock: "In Stock",
         category: "FISH IT"
+        isRate: true
     },
     { 
         id: 5, 
@@ -48,6 +52,7 @@ const products = [
         img: "https://placehold.co/300x300/1a1b3a/white?text=Pet",
         stock: "In Stock",
         category: "FISH IT"
+        isRate: true
     },
     { 
         id: 6, 
@@ -58,6 +63,7 @@ const products = [
         img: "https://placehold.co/300x300/1a1b3a/white?text=Pet",
         stock: "In Stock",
         category: "FISH IT"
+        isRate: true
     },
     { 
         id: 7, 
@@ -68,6 +74,7 @@ const products = [
         img: "https://placehold.co/300x300/1a1b3a/white?text=Pet",
         stock: "In Stock",
         category: "FISH IT"
+        isRate: true
     },
     { 
         id: 8, 
@@ -78,6 +85,7 @@ const products = [
         img: "https://placehold.co/300x300/1a1b3a/white?text=Pet",
         stock: "In Stock",
         category: "FISH IT"
+        isRate: true
     },
     { 
         id: 9, 
@@ -88,7 +96,30 @@ const products = [
         img: "https://placehold.co/300x300/1a1b3a/white?text=Pet",
         stock: "In Stock",
         category: "FISH IT"
-    }
+        isRate: true
+    },
+    { 
+        id: 10, 
+        name: "REDINGER 7 DAY - CODE", 
+        price: 7, 
+        oldPrice: 200.00, 
+        disc: "25%", 
+        img: "https://placehold.co/300x300/1a1b3a/white?text=Pet",
+        stock: "In Stock",
+        category: "REDFINGER"
+        isRate: false
+    },
+    { 
+        id: 11, 
+        name: "REDFINGER 30 DAY - CODE", 
+        price: 17, 
+        oldPrice: 200.00, 
+        disc: "25%", 
+        img: "https://placehold.co/300x300/1a1b3a/white?text=Pet",
+        stock: "In Stock",
+        category: "REDFINGER"
+        isRate: false
+    },
 ];
 
 window.gameProducts = products;
