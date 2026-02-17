@@ -161,8 +161,12 @@ function openOrderModal(itemName, amount = 0, isRate = false) {
                 </div>
 
                 <div>
+                    <label class="text-xs text-gray-400 font-bold uppercase">Nama Item</label>
+                    <input type="text" id="orderItem" class="w-full bg-[#0f1021] border border-gray-700 p-3 rounded-xl text-white outline-none focus:border-red-500 transition" placeholder="Contoh: Skin Rod Krampus / VIP Luck">
+                </div>
+                <div>
                     <label class="text-xs text-gray-400 font-bold uppercase">Nama Map / Game</label>
-                    <input type="text" id="orderMap" class="w-full bg-[#0f1021] border border-gray-700 p-3 rounded-xl text-white outline-none focus:border-red-500 transition" placeholder="Contoh: Fisch / PS99">
+                    <input type="text" id="orderMap" class="w-full bg-[#0f1021] border border-gray-700 p-3 rounded-xl text-white outline-none focus:border-red-500 transition" placeholder="Contoh: Fish It / The Forge">
                 </div>
 
                 <button onclick="sendWhatsApp('${itemName}')" class="w-full bg-green-600 hover:bg-green-500 py-4 rounded-xl font-black text-white transition shadow-lg uppercase tracking-widest mt-2">
