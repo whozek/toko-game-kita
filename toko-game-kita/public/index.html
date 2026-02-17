@@ -7,354 +7,174 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-            /* Kad Produk Pro */
+        body { background-color: #05060f; color: #e2e8f0; font-family: 'Inter', sans-serif; }
+        
+        /* 1. Marquee Animation */
+        .marquee-container { width: 100%; overflow: hidden; background: rgba(239, 68, 68, 0.1); padding: 8px 0; border-y: 1px solid rgba(239, 68, 68, 0.2); }
+        .marquee-text { display: inline-block; white-space: nowrap; animation: marquee 20s linear infinite; font-weight: 800; color: #ef4444; font-style: italic; text-transform: uppercase; font-size: 12px; }
+        @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+
+        /* 2. Pro Product Card (Glassmorphism) */
         .game-card {
-            background: linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
-            backdrop-filter: blur(10px);
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
+            backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
-            overflow: hidden;
         }
+        .game-card:hover { transform: translateY(-8px); border-color: #ef4444; box-shadow: 0 15px 30px rgba(0,0,0,0.5); }
+        .game-card img { transition: transform 0.4s ease; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.3)); }
+        .game-card:hover img { transform: scale(1.1) rotate(3deg); }
 
-        /* Efek bila Mouse lalu (Hover) */
-        .game-card:hover {
-            transform: translateY(-10px) scale(1.02);
-            border-color: rgba(239, 68, 68, 0.5);
-            box-shadow: 0 20px 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(239, 68, 68, 0.2);
-        }
+        /* 3. Stock Widget & Glow */
+        .stock-box { background: rgba(255, 255, 255, 0.03); border-left: 4px solid #f59e0b; }
+        .robux-glow { color: #f59e0b; text-shadow: 0 0 10px rgba(245, 158, 11, 0.4); }
 
-        /* Efek Cahaya Bergerak di belakang kad */
-        .game-card::before {
-            content: "";
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(239, 68, 68, 0.1) 0%, transparent 70%);
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .game-card:hover::before {
-            opacity: 1;
-        }
-
-        /* Gambar Produk lebih "pop out" */
-        .game-card img {
-            transition: transform 0.5s ease;
-            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.5));
-        }
-
-        .game-card:hover img {
-            transform: rotate(5deg) scale(1.1);
-        }
-
-        /* Butang yang lebih bergaya */
-        .btn-glow {
-            position: relative;
-            transition: all 0.3s;
-            overflow: hidden;
-        }
-
-        .btn-glow:hover {
-            box-shadow: 0 0 20px rgba(239, 68, 68, 0.6);
-            background-color: #ff0000;
-        }
-
-        
-        /* Container utama untuk tulisan bergerak */
-        .marquee-container {
-            width: 100%;
-            overflow: hidden; /* Sorok tulisan yang keluar dari kawasan */
-            background: rgba(255, 0, 0, 0.1); /* Warna latar belakang nipis */
-            padding: 10px 0;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            margin-bottom: 20px;
-        }
-
-        /* Tulisan yang akan bergerak */
-        .marquee-text {
-            display: inline-block;
-            white-space: nowrap; /* Elakkan tulisan pecah ke bawah */
-            padding-left: 100%; /* Mula dari luar kanan skrin */
-            animation: marquee 15s linear infinite; /* Kelajuan 15 saat, gerak sekata, tanpa henti */
-            font-size: 14px;
-            font-weight: bold;
-            color: #ff4d4d;
-            text-transform: uppercase;
-            italic: italic;
-        }
-
-        /* Animasi pergerakan */
-        @keyframes marquee {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(-100%, 0); }
-        }
-        
-        .stock-container {
-            background: linear-gradient(90deg, rgba(255,0,0,0.1) 0%, rgba(255,255,255,0.05) 100%);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-left: 4px solid #ef4444;
-        }
-        .robux-glow {
-            color: #ffb800;
-            text-shadow: 0 0 10px rgba(255, 184, 0, 0.5);
-        }
-        
-    @keyframes glow {
-        0%, 100% { text-shadow: 0 0 5px #ff0000, 0 0 10px #ff4d00; }
-        50% { text-shadow: 0 0 20px #ff0000, 0 0 30px #ff8800; }
-    }
-    
-    .animate-pulse {
-        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite, glow 2s ease-in-out infinite;
-    }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 </head>
-<body class="text-gray-200">
+<body>
 
-    <nav class="flex items-center justify-between px-6 py-4 border-b border-gray-800 bg-[#0f1021] sticky top-0 z-50">
-        <div class="flex items-center space-x-3">
-            <span id="user-display" class="text-[10px] text-gray-400"></span>
-            <button onclick="logout()" class="text-xs bg-gray-800 px-3 py-1 rounded-lg">Logout</button>
-        </div>
-        <div class="flex items-center space-x-4">
-            <h1 class="text-xl font-extrabold text-white uppercase">KZMartMY<span class="text-red-500">STORE</span></h1>
-        </div>
-        <div class="flex items-center space-x-4">
-            <span class="bg-gray-700 px-3 py-1 rounded text-xs font-bold">RM</span>
-            <i class="fas fa-shopping-cart"></i>
-        </div>
-    </nav>
-
-    <div class="marquee-container">
-        <div class="marquee-text">
-        ⭐ Can Topup All Roblox Games (Must Have Gifting Features) ⭐ &nbsp;&nbsp;&nbsp;&nbsp; 
-        ⭐ Can Topup All Roblox Games (Must Have Gifting Features) ⭐ &nbsp;&nbsp;&nbsp;&nbsp;
-        </div>
-    </div>
-    
-    <div class="stock-container mx-auto my-4 p-3 rounded-xl flex justify-between items-center">
-        <div class="flex items-center space-x-2">
-            <span class="text-xl">💰</span>
-            <div>
-            <p class="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Current Stock</p>
-            <p class="text-sm font-black text-white italic">ROBUX AVAILABLE</p>
+    <div class="max-w-md mx-auto min-h-screen pb-24 p-4">
+        <div class="flex justify-between items-center mb-6">
+            <button onclick="logout()" class="text-[10px] font-black uppercase tracking-tighter bg-red-600/10 text-red-500 px-4 py-2 rounded-full border border-red-600/30">Logout</button>
+            <div class="text-right">
+                <p id="user-display" class="text-sm font-black text-white italic">Guest User</p>
+                <p class="text-[9px] text-green-500 font-bold tracking-widest uppercase">Account Verified</p>
             </div>
         </div>
-        <div class="text-right">
-            <span id="robux-stock-display" class="robux-glow text-xl font-black italic">50,000+</span>
-            <p class="text-[9px] text-green-500 font-bold uppercase">Ready to Gift ✅</p>
-        </div>
-    </div>
 
-
-
-    <main class="p-6">
-
-        <div class="flex space-x-2 overflow-x-auto pb-4 no-scrollbar">
-            <button onclick="displayGames('ALL')" class="bg-red-600 text-white px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap">ALL</button>
-            <button onclick="displayGames('FISH IT')" class="bg-gray-800 text-gray-400 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap">FISH IT</button>
-            <button onclick="displayGames('REDFINGER')" class="bg-gray-800 text-gray-400 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap">REDFINGER</button>
-        </div>
-
-        <div id="game-list" class="grid grid-cols-2 gap-4">
+        <div class="marquee-container rounded-lg mb-4">
+            <div class="marquee-text">
+                ⭐ Can Topup All Roblox Games (Have Gifting Features) ⭐ &nbsp;&nbsp;&nbsp;&nbsp; ⭐ Trusted Seller KZMartMY ⭐
             </div>
+        </div>
+
+        <div class="stock-box p-4 rounded-2xl mb-6 flex justify-between items-center border border-white/5">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-yellow-500/10 rounded-full flex items-center justify-center text-xl">💰</div>
+                <div>
+                    <p class="text-[9px] text-gray-500 font-bold uppercase tracking-tighter">Current Inventory</p>
+                    <p class="text-xs font-black text-white italic">ROBUX STOCK</p>
+                </div>
+            </div>
+            <div class="text-right">
+                <span id="robux-stock-display" class="robux-glow text-xl font-black italic">50,000+</span>
+                <p class="text-[8px] text-green-400 font-bold animate-pulse">● READY TO GIFT</p>
+            </div>
+        </div>
+
+        <div class="flex space-x-2 overflow-x-auto pb-6 no-scrollbar">
+            <button onclick="displayGames('ALL')" class="bg-red-600 text-white px-6 py-2.5 rounded-xl text-[10px] font-black italic uppercase tracking-widest">ALL</button>
+            <button onclick="displayGames('FISH IT')" class="bg-white/5 text-gray-400 px-6 py-2.5 rounded-xl text-[10px] font-black italic uppercase tracking-widest border border-white/5">FISH IT</button>
+            <button onclick="displayGames('REDFINGER')" class="bg-white/5 text-gray-400 px-6 py-2.5 rounded-xl text-[10px] font-black italic uppercase tracking-widest border border-white/5">REDFINGER</button>
+        </div>
+
+        <div id="game-list" class="grid grid-cols-2 gap-4"></div>
     </div>
 
-    <div id="variantModal" class="fixed inset-0 bg-black/90 z-[150] hidden flex items-center justify-center p-4">
-        <div class="bg-[#1a1b3a] w-full max-w-sm rounded-2xl p-6 border border-gray-700">
-            <h2 id="variantTitle" class="text-xl font-bold text-white mb-4 italic text-red-500">PILIH ITEM</h2>
-            <div id="variantList" class="space-y-3 max-h-[60vh] overflow-y-auto"></div>
-            <button onclick="closeVariantModal()" class="w-full mt-6 py-3 rounded-xl text-gray-400 font-bold bg-gray-800">Tutup</button>
+    <div id="variantModal" class="fixed inset-0 bg-black/95 z-[150] hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-[#0f1021] w-full max-w-sm rounded-3xl p-6 border border-white/10 shadow-2xl">
+            <h2 id="variantTitle" class="text-xl font-black text-red-500 mb-4 italic uppercase tracking-tighter">Pilih Varian</h2>
+            <div id="variantList" class="space-y-3 max-h-[60vh] overflow-y-auto pr-1"></div>
+            <button onclick="closeVariantModal()" class="w-full mt-6 py-3 text-gray-500 text-[10px] font-bold uppercase tracking-widest">Kembali</button>
         </div>
     </div>
+
+    <div id="orderModal" class="fixed inset-0 bg-black/95 z-[200] hidden flex items-center justify-center p-4 backdrop-blur-md">
+        </div>
 
     <script src="product.js"></script>
     <script>
-        // Letakkan di bahagian atas script anda
-    const CURRENT_ROBUX_STOCK = "45,500"; // Tukar jumlah di sini
+        const RATE_PER_ROBUX = 0.012;
 
-        // Tambah ini di dalam window.onload anda
-        document.getElementById('robux-stock-display').innerText = CURRENT_ROBUX_STOCK + "+";
+        // Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyAzqZNdN2Hq6gq7CqKsBRE7isgXZVFQChU",
+            authDomain: "kzmart-auth.firebaseapp.com",
+            projectId: "kzmart-auth",
+            storageBucket: "kzmart-auth.firebasestorage.app",
+            messagingSenderId: "1084515236820",
+            appId: "1:1084515236820:web:582cb2a5cdb5181b5f9441"
+        };
+        firebase.initializeApp(firebaseConfig);
 
-    // Tetapkan Rate per 1 Robux (Contoh: RM1.20 / 100 = 0.012)
-    const RATE_PER_ROBUX = 0.023; 
+        firebase.auth().onAuthStateChanged((user) => {
+            if (!user) { window.location.href = 'login.html'; }
+            else { document.getElementById('user-display').innerText = user.email.split('@')[0]; }
+        });
 
-    // --- Firebase & Auth (Kekalkan yang asal) ---
-    const firebaseConfig = {
-        apiKey: "AIzaSyAzqZNdN2Hq6gq7CqKsBRE7isgXZVFQChU",
-        authDomain: "kzmart-auth.firebaseapp.com",
-        projectId: "kzmart-auth",
-        storageBucket: "kzmart-auth.firebasestorage.app",
-        messagingSenderId: "1084515236820",
-        appId: "1:1084515236820:web:582cb2a5cdb5181b5f9441",
-        measurementId: "G-PV2MFPwMCZ"
-    };
-    firebase.initializeApp(firebaseConfig);
-    firebase.auth().onAuthStateChanged((user) => {
-        if (!user) { window.location.href = 'login.html'; }
-        else { document.getElementById('user-display').innerText = user.email.split('@')[0]; }
-    });
+        function logout() { firebase.auth().signOut().then(() => { window.location.href = 'login.html'; }); }
 
-    // --- FUNGSI UTAMA ---
+        function displayGames(filter = 'ALL') {
+            const list = document.getElementById('game-list');
+            const data = window.allProducts || [];
+            const filtered = filter === 'ALL' ? data : data.filter(p => p.category === filter);
 
-    function displayGames(filter = 'ALL') {
-        const list = document.getElementById('game-list');
-        const data = window.allProducts || [];
-        const filtered = filter === 'ALL' ? data : data.filter(p => p.category === filter);
-
-                list.innerHTML = filtered.map(game => {
-            let action = game.isVariant ? `openVariantModal(${game.id})` : `openOrderModal('${game.name}')`;
-
-            return `
-                <div class="game-card group rounded-3xl p-4 text-center">
-                    ${game.disc ? `<span class="absolute top-3 left-3 bg-green-500 text-[9px] font-black px-2 py-1 rounded-lg z-10 shadow-lg italic">OFF ${game.disc}</span>` : ''}
-            
-                    <div class="relative mb-4">
-                        <img src="${game.img}" class="w-full h-28 object-contain z-10 relative">
-                        <div class="absolute inset-0 bg-red-600/10 blur-3xl rounded-full scale-50 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    </div>
-
-                    <h3 class="text-xs font-black mb-4 text-gray-100 tracking-wide uppercase italic leading-tight h-8 flex items-center justify-center">
-                        ${game.name}
-                    </h3>
-
-                    <button onclick="${action}" class="btn-glow w-full bg-red-600 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest text-white transition-all">
-                        ${game.isVariant ? 'See Variants' : 'Buy Now'}
-                    </button>
-                </div>
-            `;
-        }).join('');
-
+            list.innerHTML = filtered.map(game => {
+                const action = game.isVariant ? `openVariantModal(${game.id})` : `openOrderModal('${game.name}')`;
+                return `
+                    <div class="game-card rounded-3xl p-4 text-center relative group">
+                        ${game.disc ? `<span class="absolute top-2 left-2 bg-red-600 text-[8px] font-black px-2 py-0.5 rounded-md italic">-${game.disc}</span>` : ''}
+                        <img src="${game.img}" class="w-full h-24 object-contain mb-3">
+                        <h3 class="text-[10px] font-black text-gray-200 mb-4 uppercase italic leading-tight">${game.name}</h3>
+                        <button onclick="${action}" class="w-full bg-red-600 py-2.5 rounded-xl text-[9px] font-black text-white uppercase tracking-widest hover:bg-red-500 transition-all">See Variants</button>
+                    </div>`;
+            }).join('');
         }
 
-    function openVariantModal(id) {
-        const product = window.allProducts.find(p => p.id === id);
-        document.getElementById('variantTitle').innerText = product.name;
-        document.getElementById('variantList').innerHTML = product.variants.map(v => {
-            const finalPrice = v.isRate ? (v.price * RATE_PER_ROBUX).toFixed(2) : v.price.toFixed(2);
-            return `
-                <button onclick="openOrderModal('${v.name}', ${v.price}, ${v.isRate})" 
-                    class="w-full flex justify-between bg-[#0f1021] border border-gray-700 p-4 rounded-xl text-white text-sm hover:border-red-500 transition">
-                    <span>${v.name}</span>
-                    <span class="text-red-500 font-bold">RM ${finalPrice}</span>
-                </button>`;
-        }).join('');
-        document.getElementById('variantModal').classList.remove('hidden');
-    }
-
-    // FUNGSI BORANG ORDER (Username, Robux, Harga, Map)
-function openOrderModal(itemName, amount = 0, isRate = false) {
-    closeVariantModal();
-    
-    // Nilai awal pengiraan harga
-    const initialPrice = isRate ? (amount * RATE_PER_ROBUX).toFixed(2) : amount.toFixed(2);
-    
-    const orderModal = document.getElementById('orderModal');
-    orderModal.innerHTML = `
-        <div class="bg-[#1a1b3a] w-full max-w-sm rounded-2xl p-6 border border-gray-700 shadow-2xl overflow-y-auto max-h-[90vh]">
-            <h2 class="text-xl font-bold text-white mb-4 italic text-red-500 uppercase tracking-widest">Order Details</h2>
-            
-            <div class="mb-5 p-2 bg-white rounded-xl">
-                <img src="qr-pay.jpg.jpg" 
-                     alt="QR Payment" 
-                     class="w-32 h-32 mx-auto object-contain">
-                <p class="text-[10px] text-gray-800 text-center font-bold mt-1 uppercase">Scan QR Untuk Pembayaran</p>
-            </div>
-
-            <div class="space-y-4">
-                <div>
-                    <label class="text-xs text-gray-400 font-bold uppercase">Username Roblox</label>
-                    <input type="text" id="orderUser" class="w-full bg-[#0f1021] border border-gray-700 p-3 rounded-xl text-white outline-none focus:border-red-500 transition" placeholder="Masukkan username...">
-                </div>
-                
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="text-xs text-gray-400 font-bold uppercase">Jumlah Robux</label>
-                        <input type="number" id="orderRobux" value="${amount}" 
-                            oninput="updatePrice(this.value)"
-                            class="w-full bg-[#0f1021] border border-gray-700 p-3 rounded-xl text-white outline-none focus:border-red-500 transition" 
-                            placeholder="0">
-                    </div>
-                    <div>
-                        <label class="text-xs text-gray-400 font-bold uppercase">Harga (RM)</label>
-                        <input type="text" id="orderPrice" value="${initialPrice}" readonly 
-                            class="w-full bg-gray-800 border border-gray-700 p-3 rounded-xl text-gray-400 font-bold">
-                    </div>
-                </div>
-
-                <div>
-                    <label class="text-xs text-gray-400 font-bold uppercase">Nama Item</label>
-                    <input type="text" id="orderItem" class="w-full bg-[#0f1021] border border-gray-700 p-3 rounded-xl text-white outline-none focus:border-red-500 transition" placeholder="Contoh: Skin Rod Krampus / VIP Luck">
-                </div>
-                <div>
-                    <label class="text-xs text-gray-400 font-bold uppercase">Nama Map / Game</label>
-                    <input type="text" id="orderMap" class="w-full bg-[#0f1021] border border-gray-700 p-3 rounded-xl text-white outline-none focus:border-red-500 transition" placeholder="Contoh: Fish It / The Forge">
-                </div>
-
-                <button onclick="sendWhatsApp('${itemName}')" class="w-full bg-green-600 hover:bg-green-500 py-4 rounded-xl font-black text-white transition shadow-lg uppercase tracking-widest mt-2">
-                    Hantar Order
-                </button>
-                <button onclick="closeOrderModal()" class="w-full text-gray-500 text-xs font-bold uppercase hover:text-white transition">Batalkan</button>
-            </div>
-        </div>
-    `;
-    orderModal.classList.remove('hidden');
-}
-
-// Pastikan fungsi ini juga ada untuk pengiraan automatik
-function updatePrice(robuxAmount) {
-    const priceField = document.getElementById('orderPrice');
-    if (robuxAmount > 0) {
-        const total = robuxAmount * RATE_PER_ROBUX;
-        priceField.value = total.toFixed(2);
-    } else {
-        priceField.value = "0.00";
-    }
-}
-
-    function sendWhatsApp(itemName) {
-        const user = document.getElementById('orderUser').value;
-        const robux = document.getElementById('orderRobux').value;
-        const price = document.getElementById('orderPrice').value;
-        const map = document.getElementById('orderMap').value;
-
-        if(!user || !map) {
-            alert("Sila masukkan Username dan Nama Map!");
-            return;
+        function openVariantModal(id) {
+            const product = window.allProducts.find(p => p.id === id);
+            document.getElementById('variantTitle').innerText = product.name;
+            document.getElementById('variantList').innerHTML = product.variants.map(v => {
+                const p = v.isRate ? (v.price * RATE_PER_ROBUX).toFixed(2) : v.price.toFixed(2);
+                return `
+                    <button onclick="openOrderModal('${v.name}', ${v.price}, ${v.isRate})" class="w-full flex justify-between items-center bg-white/5 border border-white/5 p-4 rounded-2xl text-white hover:border-red-500 transition-all">
+                        <span class="text-xs font-bold">${v.name}</span>
+                        <span class="text-red-500 font-black italic text-sm">RM ${p}</span>
+                    </button>`;
+            }).join('');
+            document.getElementById('variantModal').classList.remove('hidden');
         }
 
-        const msg = `Halo KZMartMY!%0A%0A` +
-                    `*ORDER GIFT IN-GAME*%0A` +
-                    `Item: ${itemName}%0A` +
-                    `Username: ${user}%0A` +
-                    `Jumlah Robux: ${robux}%0A` +
-                    `Harga: RM${price}%0A` +
-                    `Map: ${map}`;
-        
-        window.open(`https://wa.me/60167481645?text=${msg}`);
-    }
+        function openOrderModal(itemName, amount = 0, isRate = false) {
+            closeVariantModal();
+            const initialPrice = isRate ? (amount * RATE_PER_ROBUX).toFixed(2) : amount.toFixed(2);
+            document.getElementById('orderModal').innerHTML = `
+                <div class="bg-[#0f1021] w-full max-w-sm rounded-3xl p-6 border border-white/10 shadow-2xl overflow-y-auto max-h-[90vh]">
+                    <div class="mb-6 bg-white p-3 rounded-2xl"><img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=KZMartMY" class="w-32 h-32 mx-auto"></div>
+                    <div class="space-y-4 text-left">
+                        <div><label class="text-[10px] text-gray-500 font-black uppercase">Username</label>
+                        <input type="text" id="orderUser" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white outline-none focus:border-red-500" placeholder="User123"></div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div><label class="text-[10px] text-gray-500 font-black uppercase">Robux</label>
+                            <input type="number" id="orderRobux" value="${amount}" oninput="updatePrice(this.value)" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white outline-none focus:border-red-500"></div>
+                            <div><label class="text-[10px] text-gray-500 font-black uppercase">Price RM</label>
+                            <input type="text" id="orderPrice" value="${initialPrice}" readonly class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-gray-400 font-bold"></div>
+                        </div>
+                        <div><label class="text-[10px] text-gray-500 font-black uppercase">Map Name</label>
+                        <input type="text" id="orderMap" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white outline-none focus:border-red-500" placeholder="Fisch"></div>
+                        <button onclick="sendWhatsApp('${itemName}')" class="w-full bg-green-600 py-4 rounded-2xl font-black text-white uppercase tracking-widest mt-2">Hantar Order</button>
+                        <button onclick="closeOrderModal()" class="w-full text-gray-500 text-[10px] font-bold uppercase mt-2">Batal</button>
+                    </div>
+                </div>`;
+            document.getElementById('orderModal').classList.remove('hidden');
+        }
 
-    function closeOrderModal() { document.getElementById('orderModal').classList.add('hidden'); }
-    function closeVariantModal() { document.getElementById('variantModal').classList.add('hidden'); }
+        function updatePrice(val) { document.getElementById('orderPrice').value = (val * RATE_PER_ROBUX).toFixed(2); }
+        function sendWhatsApp(item) {
+            const u = document.getElementById('orderUser').value;
+            const r = document.getElementById('orderRobux').value;
+            const p = document.getElementById('orderPrice').value;
+            const m = document.getElementById('orderMap').value;
+            if(!u || !m) return alert("Isi Username & Map!");
+            window.open(`https://wa.me/60167481645?text=*ORDER GIFT*%0AItem: ${item}%0AUser: ${u}%0ARobux: ${r}%0APrice: RM${p}%0AMap: ${m}`);
+        }
+        function closeOrderModal() { document.getElementById('orderModal').classList.add('hidden'); }
+        function closeVariantModal() { document.getElementById('variantModal').classList.add('hidden'); }
 
-    window.onload = () => { setTimeout(() => displayGames('ALL'), 500); };
-</script>
-<div id="variantModal" class="fixed inset-0 bg-black/90 z-[150] hidden flex items-center justify-center p-4">
-    <div class="bg-[#1a1b3a] w-full max-w-sm rounded-2xl p-6 border border-gray-700 shadow-2xl">
-        <h2 id="variantTitle" class="text-xl font-bold text-white mb-4 italic text-red-500 uppercase">Pilih Varian</h2>
-        <div id="variantList" class="space-y-3"></div>
-        <button onclick="closeVariantModal()" class="w-full mt-6 py-2 text-gray-500 text-xs uppercase font-bold tracking-widest">Tutup</button>
-    </div>
-</div>
-
-<div id="orderModal" class="fixed inset-0 bg-black/90 z-[200] hidden flex items-center justify-center p-4">
-    </div>
+        window.onload = () => { setTimeout(() => displayGames('ALL'), 300); };
+    </script>
 </body>
 </html>
