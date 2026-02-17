@@ -99,35 +99,28 @@
     </div>
 </div>
 
-<script>
-    const firebaseConfig = {
-        apiKey: "AIzaSyAzqZNdN2Hq6gq7CqKsBRE7isgXZVFQChU",
-        authDomain: "kzmart-auth.firebaseapp.com",
-        projectId: "kzmart-auth",
-        storageBucket: "kzmart-auth.firebasestorage.app",
-        messagingSenderId: "1084515236820",
-        appId: "1:1084515236820:web:582cb2a5cdb5181b5f9441",
-        measurementId: "G-PV2MFPwMCZ"
-    };
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
 
-firebase.initializeApp(firebaseConfig);
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyAzqZNdN2Hq6gq7CqKsBRE7isgXZVFQChU",
+    authDomain: "kzmart-auth.firebaseapp.com",
+    projectId: "kzmart-auth",
+    storageBucket: "kzmart-auth.firebasestorage.app",
+    messagingSenderId: "1004515236820",
+    appId: "1:1004515236820:web:502cb2e5cdb5181b5f9441",
+    measurementId: "G-PV3MFPWWCZ"
+  };
 
-firebase.auth().onAuthStateChanged((user) => {
-    if (!user) {
-        // Jika belum login, tendang ke halaman login
-        window.location.href = 'login.html';
-    } else {
-        console.log("Logged in as:", user.email);
-        // Tampilkan username/email di navbar jika mahu
-        document.getElementById('user-display').innerText = user.email.split('@')[0];
-    }
-});
-
-function logout() {
-    firebase.auth().signOut().then(() => {
-        window.location.href = 'login.html';
-    });
-}
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
 </script>
 
     <script src="product.js"></script>
