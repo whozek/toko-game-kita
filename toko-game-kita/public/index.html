@@ -120,7 +120,7 @@
 </div>
 
 <script>
-    // 1. Firebase Config
+    // 1. Firebase Configuration
     const firebaseConfig = {
         apiKey: "AIzaSyAzqZNdN2Hq6gq7CqKsBRE7isgXZVFQChU",
         authDomain: "kzmart-auth.firebaseapp.com",
@@ -149,9 +149,8 @@
         });
     }
 
-    // 3. Fungsi Variant Modal (SANGAT PENTING)
+    // 3. Fungsi Variant Modal (INI YANG BUAT BUTANG JALAN)
     function openVariantModal(productId) {
-        // Cari produk dalam window.allProducts
         const product = window.allProducts.find(p => p.id === productId);
         if (!product) return;
 
@@ -167,7 +166,7 @@
             </button>
         `).join('');
         
-        document.getElementById('variantModal's).classList.remove('hidden');
+        document.getElementById('variantModal').classList.remove('hidden');
     }
 
     function selectVariant(name, price, isRate) {
@@ -316,5 +315,13 @@ function displayGames(filter = 'ALL') {
 
         window.onload = () => { displayGames('ALL'); };
     </script>
+    <div id="variantModal" class="fixed inset-0 bg-black/90 z-[150] hidden flex items-center justify-center p-4">
+    <div class="bg-[#1a1b3a] w-full max-w-sm rounded-2xl p-6 border border-gray-700">
+        <h2 id="variantTitle" class="text-xl font-bold text-white mb-4 italic uppercase">Pilih Varian</h2>
+        <div id="variantList" class="max-h-[60vh] overflow-y-auto pr-2">
+            </div>
+        <button onclick="closeVariantModal()" class="w-full mt-4 py-2 text-gray-400 text-sm bg-gray-800 rounded-lg font-bold">Tutup</button>
+    </div>
+</div>
 </body>
 </html>
