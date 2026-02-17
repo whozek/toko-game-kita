@@ -99,16 +99,16 @@
     </div>
 </div>
 
-// index.html - Baris 100
-const firebaseConfig = {
-    apiKey: "AIzaSyAzqZNdN2Hq6gq7CqKsBRE7isgXZVFQChU",
-    authDomain: "kzmart-auth.firebaseapp.com",
-    projectId: "kzmart-auth",
-    storageBucket: "kzmart-auth.firebasestorage.app",
-    messagingSenderId: "1084515236820",
-    appId: "1:1084515236820:web:582cb2a5cdb5181b5f9441",
-    measurementId: "G-PV2MFPwMCZ"
-};
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyAzqZNdN2Hq6gq7CqKsBRE7isgXZVFQChU",
+        authDomain: "kzmart-auth.firebaseapp.com",
+        projectId: "kzmart-auth",
+        storageBucket: "kzmart-auth.firebasestorage.app",
+        messagingSenderId: "1084515236820",
+        appId: "1:1084515236820:web:582cb2a5cdb5181b5f9441",
+        measurementId: "G-PV2MFPwMCZ"
+    };
 
 firebase.initializeApp(firebaseConfig);
 
@@ -128,6 +128,7 @@ function logout() {
         window.location.href = 'login.html';
     });
 }
+</script>
 
     <script src="product.js"></script>
 
