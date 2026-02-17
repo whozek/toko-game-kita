@@ -129,97 +129,95 @@
     </div>
 
     <script>
-        // 1. Firebase Config
-        const firebaseConfig = {
-            apiKey: "AIzaSyAzqZNdN2Hq6gq7CqKsBRE7isgXZVFQChU",
-            authDomain: "kzmart-auth.firebaseapp.com",
-            projectId: "kzmart-auth",
-            storageBucket: "kzmart-auth.firebasestorage.app",
-            messagingSenderId: "1084515236820",
-            appId: "1:1084515236820:web:582cb2a5cdb5181b5f9441",
-            measurementId: "G-PV2MFPwMCZ"
-        };
-        firebase.initializeApp(firebaseConfig);
+    // 1. Firebase Config
+    const firebaseConfig = {
+        apiKey: "AIzaSyAzqZNdN2Hq6gq7CqKsBRE7isgXZVFQChU",
+        authDomain: "kzmart-auth.firebaseapp.com",
+        projectId: "kzmart-auth",
+        storageBucket: "kzmart-auth.firebasestorage.app",
+        messagingSenderId: "1084515236820",
+        appId: "1:1084515236820:web:582cb2a5cdb5181b5f9441",
+        measurementId: "G-PV2MFPwMCZ"
+    };
+    firebase.initializeApp(firebaseConfig);
 
-        // 2. Auth Guard
-        firebase.auth().onAuthStateChanged((user) => {
-            if (!user) {
-                window.location.href = 'login.html';
+    // 2. Auth Guard & Logout
+    firebase.auth().onAuthStateChanged((user) => {
+        if (!user) { window.location.href = 'login.html'; }
+        else { 
+            const userDisplay = document.getElementById('user-display');
+            if (userDisplay) userDisplay.innerText = user.email.split('@')[0];
+        }
+    });
+
+    function logout() {
+        firebase.auth().signOut().then(() => { window.location.href = 'login.html'; });
+    }
+
+    // 3. Fungsi Display Produk (ASAL + VARIANT)
+    function displayGames(filter = 'ALL') {
+        const list = document.getElementById('game-list');
+        // Pastikan kita ambil data dari window.allProducts
+        const data = window.allProducts || []; 
+        
+        const filtered = filter === 'ALL' ? data : data.filter(p => p.category === filter);
+
+        if (filtered.length === 0) {
+            list.innerHTML = "<p class='text-center col-span-2 text-gray-500 py-10'>Tiada produk.</p>";
+            return;
+        }
+
+        list.innerHTML = filtered.map(game => {
+            // Logik butang: Variant vs Rate vs WhatsApp
+            let action;
+            if (game.isVariant) {
+                action = `openVariantModal(${game.id})`;
+            } else if (game.isRate) {
+                action = `openOrderModal('${game.name}')`;
             } else {
-                const userDisplay = document.getElementById('user-display');
-                if (userDisplay) userDisplay.innerText = user.email.split('@')[0];
+                action = `window.open('https://wa.me/60167481645?text=Nak%20beli%20${game.name}')`;
             }
-        });
 
-        function logout() {
-            firebase.auth().signOut().then(() => { window.location.href = 'login.html'; });
-        }
+            return `
+                <div class="game-card rounded-2xl overflow-hidden p-3 shadow-lg text-center border border-gray-800">
+                    <img src="${game.img}" class="w-full h-24 object-contain my-2">
+                    <h3 class="text-[12px] font-bold mb-3 text-gray-200">${game.name}</h3>
+                    <button onclick="${action}" class="w-full bg-red-600 py-2 rounded-lg text-[10px] font-bold uppercase text-white hover:bg-red-500 transition">
+                        ${game.isVariant ? 'See Variants' : 'Buy Now'}
+                    </button>
+                </div>
+            `;
+        }).join('');
+    }
 
-        // 3. Fungsi Variant Modal
-        function openVariantModal(productId) {
-            // Kita cari dari window.allProducts yang diimport dari product.js
-            const product = window.allProducts.find(p => p.id === productId);
-            if (!product) return;
+    // 4. Fungsi Modal (Variant)
+    function openVariantModal(productId) {
+        const product = window.allProducts.find(p => p.id === productId);
+        if (!product) return;
+        document.getElementById('variantTitle').innerText = product.name;
+        document.getElementById('variantList').innerHTML = product.variants.map(v => `
+            <button onclick="selectVariant('${v.name}', ${v.price}, ${v.isRate})" 
+                class="w-full flex justify-between items-center bg-[#0f1021] border border-gray-700 p-4 rounded-xl hover:border-red-500 transition mb-2 text-left">
+                <span class="text-sm font-medium text-white">${v.name}</span>
+                <span class="text-xs font-bold text-red-500">${v.isRate ? 'RATE' : 'RM'+v.price.toFixed(2)}</span>
+            </button>
+        `).join('');
+        document.getElementById('variantModal').classList.remove('hidden');
+    }
 
-            const list = document.getElementById('variantList');
-            document.getElementById('variantTitle').innerText = product.name;
-            
-            list.innerHTML = product.variants.map(v => `
-                <button onclick="selectVariant('${v.name}', ${v.price}, ${v.isRate})" 
-                    class="w-full flex justify-between items-center bg-[#0f1021] border border-gray-700 p-4 rounded-xl hover:border-red-500 transition text-left group">
-                    <span class="text-sm font-medium text-white group-hover:text-red-400">${v.name}</span>
-                    <span class="text-xs font-bold text-red-500">${v.isRate ? 'RATE' : 'RM'+v.price.toFixed(2)}</span>
-                </button>
-            `).join('');
-            
-            document.getElementById('variantModal').classList.remove('hidden');
-        }
+    function selectVariant(name, price, isRate) {
+        closeVariantModal();
+        if(isRate) { openOrderModal(name); }
+        else { window.open(`https://wa.me/60167481645?text=Nak%20beli%20${name}`); }
+    }
 
-        function selectVariant(name, price, isRate) {
-            closeVariantModal();
-            if(isRate) {
-                openOrderModal(name); 
-            } else {
-                window.open(`https://wa.me/60167481645?text=Nak%20beli%20${name}%20Harga:%20RM${price.toFixed(2)}`);
-            }
-        }
+    function closeVariantModal() {
+        document.getElementById('variantModal').classList.add('hidden');
+    }
 
-        function closeVariantModal() {
-            document.getElementById('variantModal').classList.add('hidden');
-        }
-
-        // 4. Fungsi Display Produk Utama
-        function displayGames(filter = 'ALL') {
-            const list = document.getElementById('game-list');
-            const data = window.allProducts || [];
-            
-            const filtered = filter === 'ALL' ? data : data.filter(p => p.category === filter);
-
-            list.innerHTML = filtered.map(game => {
-                let action;
-                if (game.isVariant) {
-                    action = `openVariantModal(${game.id})`;
-                } else if (game.isRate) {
-                    action = `openOrderModal('${game.name}')`;
-                } else {
-                    action = `window.open('https://wa.me/60167481645?text=Nak%20beli%20${game.name}')`;
-                }
-
-                return `
-                    <div class="game-card rounded-2xl overflow-hidden p-3 shadow-lg text-center border border-gray-800">
-                        <img src="${game.img}" class="w-full h-24 object-contain my-2">
-                        <h3 class="text-[12px] font-bold mb-3 text-gray-200">${game.name}</h3>
-                        <button onclick="${action}" class="w-full bg-red-600 py-2 rounded-lg text-[10px] font-bold uppercase text-white hover:bg-red-500 transition shadow-lg shadow-red-900/20">
-                            ${game.isVariant ? 'See Variants' : 'Buy Now'}
-                        </button>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        // Jalankan fungsi bila page siap
-        window.onload = () => { displayGames('ALL'); };
-    </script>
+    // PENTING: Panggil displayGames selepas product.js di-load
+    setTimeout(() => { displayGames('ALL'); }, 500);
+</script>
     <script src="product.js"></script>
 </body>
 </html>
