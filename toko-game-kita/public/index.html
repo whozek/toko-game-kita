@@ -124,50 +124,58 @@
 function openOrderModal(itemName, amount = 0, isRate = false) {
     closeVariantModal();
     
-    // Nilai awal pengiraan
+    // Nilai awal pengiraan harga
     const initialPrice = isRate ? (amount * RATE_PER_ROBUX).toFixed(2) : amount.toFixed(2);
     
     const orderModal = document.getElementById('orderModal');
     orderModal.innerHTML = `
-        <div class="bg-[#1a1b3a] w-full max-w-sm rounded-2xl p-6 border border-gray-700 shadow-2xl">
-            <h2 class="text-xl font-bold text-white mb-4 italic text-red-500">ORDER DETAILS</h2>
+        <div class="bg-[#1a1b3a] w-full max-w-sm rounded-2xl p-6 border border-gray-700 shadow-2xl overflow-y-auto max-h-[90vh]">
+            <h2 class="text-xl font-bold text-white mb-4 italic text-red-500 uppercase tracking-widest">Order Details</h2>
+            
+            <div class="mb-5 p-2 bg-white rounded-xl">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=KZMartMY_Payment" 
+                     alt="QR Payment" 
+                     class="w-32 h-32 mx-auto object-contain">
+                <p class="text-[10px] text-gray-800 text-center font-bold mt-1 uppercase">Scan QR untuk Rujukan / Info</p>
+            </div>
+
             <div class="space-y-4">
                 <div>
-                    <label class="text-xs text-gray-400 font-bold uppercase tracking-wider">Username Roblox</label>
-                    <input type="text" id="orderUser" class="w-full bg-[#0f1021] border border-gray-700 p-3 rounded-xl text-white outline-none focus:border-red-500 transition" placeholder="Username anda...">
+                    <label class="text-xs text-gray-400 font-bold uppercase">Username Roblox</label>
+                    <input type="text" id="orderUser" class="w-full bg-[#0f1021] border border-gray-700 p-3 rounded-xl text-white outline-none focus:border-red-500 transition" placeholder="Masukkan username...">
                 </div>
                 
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="text-xs text-gray-400 font-bold uppercase tracking-wider">Jumlah Robux</label>
+                        <label class="text-xs text-gray-400 font-bold uppercase">Jumlah Robux</label>
                         <input type="number" id="orderRobux" value="${amount}" 
                             oninput="updatePrice(this.value)"
                             class="w-full bg-[#0f1021] border border-gray-700 p-3 rounded-xl text-white outline-none focus:border-red-500 transition" 
                             placeholder="0">
                     </div>
                     <div>
-                        <label class="text-xs text-gray-400 font-bold uppercase tracking-wider">Harga (RM)</label>
+                        <label class="text-xs text-gray-400 font-bold uppercase">Harga (RM)</label>
                         <input type="text" id="orderPrice" value="${initialPrice}" readonly 
-                            class="w-full bg-gray-800 border border-gray-700 p-3 rounded-xl text-gray-400 cursor-not-allowed font-bold">
+                            class="w-full bg-gray-800 border border-gray-700 p-3 rounded-xl text-gray-400 font-bold">
                     </div>
                 </div>
 
                 <div>
-                    <label class="text-xs text-gray-400 font-bold uppercase tracking-wider">Nama Map / Game</label>
+                    <label class="text-xs text-gray-400 font-bold uppercase">Nama Map / Game</label>
                     <input type="text" id="orderMap" class="w-full bg-[#0f1021] border border-gray-700 p-3 rounded-xl text-white outline-none focus:border-red-500 transition" placeholder="Contoh: Fisch / PS99">
                 </div>
 
-                <button onclick="sendWhatsApp('${itemName}')" class="w-full bg-green-600 hover:bg-green-500 py-4 rounded-xl font-black text-white transition shadow-lg shadow-green-900/20 uppercase tracking-widest mt-2">
+                <button onclick="sendWhatsApp('${itemName}')" class="w-full bg-green-600 hover:bg-green-500 py-4 rounded-xl font-black text-white transition shadow-lg uppercase tracking-widest mt-2">
                     Hantar Order
                 </button>
-                <button onclick="closeOrderModal()" class="w-full text-gray-500 text-xs font-bold uppercase tracking-tighter hover:text-white transition">Batalkan</button>
+                <button onclick="closeOrderModal()" class="w-full text-gray-500 text-xs font-bold uppercase hover:text-white transition">Batalkan</button>
             </div>
         </div>
     `;
     orderModal.classList.remove('hidden');
 }
 
-// FUNGSI AUTO CALCULATE (LIVE)
+// Pastikan fungsi ini juga ada untuk pengiraan automatik
 function updatePrice(robuxAmount) {
     const priceField = document.getElementById('orderPrice');
     if (robuxAmount > 0) {
