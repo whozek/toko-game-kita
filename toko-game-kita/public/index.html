@@ -46,39 +46,52 @@
         </div>
 </main>
 
-<script src="product.js"></script>
+    <script src="product.js"></script>
 
 <script>
     function filterCategory(cat) {
-    // Tukar warna butang bila diklik
-    document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.replace('bg-red-600', 'bg-gray-800'));
-    event.target.classList.replace('bg-gray-800', 'bg-red-600');
-    
-    displayGames(cat);
-}
+        // Guna currentTarget supaya emoji dalam butang tak kacau
+        document.querySelectorAll('.cat-btn').forEach(btn => {
+            btn.classList.remove('bg-red-600');
+            btn.classList.add('bg-gray-800');
+        });
+        
+        event.currentTarget.classList.remove('bg-gray-800');
+        event.currentTarget.classList.add('bg-red-600');
+
+        displayGames(cat);
+    }
 
     function displayGames(filter = 'ALL') {
-    const list = document.getElementById('game-list');
-    if(!list) return;
+        const list = document.getElementById('game-list');
+        if (!list) return;
 
-    const allProducts = window.gameProducts;
-    
-    // Tapis produk mengikut kategori
-    const filtered = filter === 'ALL' 
-        ? allProducts 
-        : allProducts.filter(p => p.category === filter);
+        // Ambil data dari window.gameProducts (Pastikan dalam product.js ada baris ini)
+        const allProducts = window.gameProducts || [];
+        
+        const filtered = filter === 'ALL' 
+            ? allProducts 
+            : allProducts.filter(p => p.category === filter);
 
-    list.innerHTML = filtered.map(game => `
-        <div class="game-card rounded-2xl overflow-hidden p-3 shadow-lg">
-            <img src="${game.img}" class="w-full h-24 object-contain my-2">
-            <h3 class="text-[11px] font-medium mb-1 truncate text-gray-300">${game.name}</h3>
-            <div class="text-sm font-bold text-white italic">RM ${game.price.toFixed(2)}</div>
-            <button onclick="window.open('https://wa.me/60123456789?text=Nak%20beli%20${game.name}')" class="w-full mt-2 bg-red-600 py-1.5 rounded-lg text-[10px] font-bold uppercase">Buy Now</button>
-        </div>
-    `).join('');
-}
+        if (filtered.length === 0) {
+            list.innerHTML = "<p class='text-center col-span-2 text-gray-500'>Tiada produk dalam kategori ini.</p>";
+            return;
+        }
 
-    window.onload = displayGames;
+        list.innerHTML = filtered.map(game => `
+            <div class="game-card rounded-2xl overflow-hidden p-3 shadow-lg" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);">
+                <img src="${game.img}" class="w-full h-24 object-contain my-2">
+                <h3 class="text-[11px] font-medium mb-1 truncate text-gray-300">${game.name}</h3>
+                <div class="text-sm font-bold text-white italic mb-2">RM ${game.price.toFixed(2)}</div>
+                <button onclick="window.open('https://wa.me/60167481645?text=Nak%20beli%20${game.name}')" class="w-full bg-red-600 py-1.5 rounded-lg text-[10px] font-bold uppercase text-white hover:bg-red-500 transition">Buy Now</button>
+            </div>
+        `).join('');
+    }
+
+    // WAJIB ADA: Panggil fungsi ini bila window dah siap load
+    window.onload = () => {
+        displayGames('ALL');
+    };
 </script>
 </body>
 </html>
