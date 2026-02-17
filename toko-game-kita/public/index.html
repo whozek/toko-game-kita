@@ -121,41 +121,62 @@
     }
 
     // FUNGSI BORANG ORDER (Username, Robux, Harga, Map)
-    function openOrderModal(itemName, amount = 0, isRate = false) {
-        closeVariantModal();
-        const finalPrice = isRate ? (amount * RATE_PER_ROBUX).toFixed(2) : amount.toFixed(2);
-        
-        // Gantikan isi dalam modal order (Pastikan anda ada div id="orderModal" dalam HTML)
-        const orderModal = document.getElementById('orderModal');
-        orderModal.innerHTML = `
-            <div class="bg-[#1a1b3a] w-full max-w-sm rounded-2xl p-6 border border-gray-700 shadow-2xl">
-                <h2 class="text-xl font-bold text-white mb-4">Order Details</h2>
-                <div class="space-y-4">
-                    <div>
-                        <label class="text-xs text-gray-400">Username Roblox</label>
-                        <input type="text" id="orderUser" class="w-full bg-[#0f1021] border border-gray-700 p-3 rounded-xl text-white outline-none focus:border-red-500" placeholder="Contoh: RobloxUser123">
-                    </div>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="text-xs text-gray-400">Jumlah Robux</label>
-                            <input type="number" id="orderRobux" value="${amount}" readonly class="w-full bg-gray-800 border border-gray-700 p-3 rounded-xl text-gray-400 cursor-not-allowed">
-                        </div>
-                        <div>
-                            <label class="text-xs text-gray-400">Harga (RM)</label>
-                            <input type="text" id="orderPrice" value="${finalPrice}" readonly class="w-full bg-gray-800 border border-gray-700 p-3 rounded-xl text-gray-400">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="text-xs text-gray-400">Nama Map / Game</label>
-                        <input type="text" id="orderMap" class="w-full bg-[#0f1021] border border-gray-700 p-3 rounded-xl text-white outline-none focus:border-red-500" placeholder="Contoh: Fisch / Pet Sim 99">
-                    </div>
-                    <button onclick="sendWhatsApp('${itemName}')" class="w-full bg-green-600 hover:bg-green-500 py-3 rounded-xl font-bold text-white transition">Hantar Order ke WhatsApp</button>
-                    <button onclick="closeOrderModal()" class="w-full text-gray-500 text-xs">Batalkan</button>
+function openOrderModal(itemName, amount = 0, isRate = false) {
+    closeVariantModal();
+    
+    // Nilai awal pengiraan
+    const initialPrice = isRate ? (amount * RATE_PER_ROBUX).toFixed(2) : amount.toFixed(2);
+    
+    const orderModal = document.getElementById('orderModal');
+    orderModal.innerHTML = `
+        <div class="bg-[#1a1b3a] w-full max-w-sm rounded-2xl p-6 border border-gray-700 shadow-2xl">
+            <h2 class="text-xl font-bold text-white mb-4 italic text-red-500">ORDER DETAILS</h2>
+            <div class="space-y-4">
+                <div>
+                    <label class="text-xs text-gray-400 font-bold uppercase tracking-wider">Username Roblox</label>
+                    <input type="text" id="orderUser" class="w-full bg-[#0f1021] border border-gray-700 p-3 rounded-xl text-white outline-none focus:border-red-500 transition" placeholder="Username anda...">
                 </div>
+                
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-xs text-gray-400 font-bold uppercase tracking-wider">Jumlah Robux</label>
+                        <input type="number" id="orderRobux" value="${amount}" 
+                            oninput="updatePrice(this.value)"
+                            class="w-full bg-[#0f1021] border border-gray-700 p-3 rounded-xl text-white outline-none focus:border-red-500 transition" 
+                            placeholder="0">
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-400 font-bold uppercase tracking-wider">Harga (RM)</label>
+                        <input type="text" id="orderPrice" value="${initialPrice}" readonly 
+                            class="w-full bg-gray-800 border border-gray-700 p-3 rounded-xl text-gray-400 cursor-not-allowed font-bold">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="text-xs text-gray-400 font-bold uppercase tracking-wider">Nama Map / Game</label>
+                    <input type="text" id="orderMap" class="w-full bg-[#0f1021] border border-gray-700 p-3 rounded-xl text-white outline-none focus:border-red-500 transition" placeholder="Contoh: Fisch / PS99">
+                </div>
+
+                <button onclick="sendWhatsApp('${itemName}')" class="w-full bg-green-600 hover:bg-green-500 py-4 rounded-xl font-black text-white transition shadow-lg shadow-green-900/20 uppercase tracking-widest mt-2">
+                    Hantar Order
+                </button>
+                <button onclick="closeOrderModal()" class="w-full text-gray-500 text-xs font-bold uppercase tracking-tighter hover:text-white transition">Batalkan</button>
             </div>
-        `;
-        orderModal.classList.remove('hidden');
+        </div>
+    `;
+    orderModal.classList.remove('hidden');
+}
+
+// FUNGSI AUTO CALCULATE (LIVE)
+function updatePrice(robuxAmount) {
+    const priceField = document.getElementById('orderPrice');
+    if (robuxAmount > 0) {
+        const total = robuxAmount * RATE_PER_ROBUX;
+        priceField.value = total.toFixed(2);
+    } else {
+        priceField.value = "0.00";
     }
+}
 
     function sendWhatsApp(itemName) {
         const user = document.getElementById('orderUser').value;
