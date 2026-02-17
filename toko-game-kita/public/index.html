@@ -7,10 +7,62 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { background-color: #0f1021; }
-        .game-card { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .discount-tag { background: #22c55e; color: white; font-size: 10px; font-weight: bold; }
-        .popular-tag { background: #ef4444; color: white; font-size: 10px; font-weight: bold; }
+            /* Kad Produk Pro */
+        .game-card {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Efek bila Mouse lalu (Hover) */
+        .game-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-color: rgba(239, 68, 68, 0.5);
+            box-shadow: 0 20px 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(239, 68, 68, 0.2);
+        }
+
+        /* Efek Cahaya Bergerak di belakang kad */
+        .game-card::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(239, 68, 68, 0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .game-card:hover::before {
+            opacity: 1;
+        }
+
+        /* Gambar Produk lebih "pop out" */
+        .game-card img {
+            transition: transform 0.5s ease;
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.5));
+        }
+
+        .game-card:hover img {
+            transform: rotate(5deg) scale(1.1);
+        }
+
+        /* Butang yang lebih bergaya */
+        .btn-glow {
+            position: relative;
+            transition: all 0.3s;
+            overflow: hidden;
+        }
+
+        .btn-glow:hover {
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.6);
+            background-color: #ff0000;
+        }
+
         
         /* Container utama untuk tulisan bergerak */
         .marquee-container {
