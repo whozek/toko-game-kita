@@ -28,7 +28,7 @@ const products = [
         img: "https://placehold.co/300x300/1a1b3a/white?text=Pet",
         stock: "In Stock",
         category: "FISH IT"
-    }
+    },
     { 
         id: 4, 
         name: "EXTRA LUCK", 
@@ -38,7 +38,7 @@ const products = [
         img: "https://placehold.co/300x300/1a1b3a/white?text=Pet",
         stock: "In Stock",
         category: "FISH IT"
-    }
+    },
     { 
         id: 5, 
         name: "SMALL LUCK", 
@@ -48,7 +48,7 @@ const products = [
         img: "https://placehold.co/300x300/1a1b3a/white?text=Pet",
         stock: "In Stock",
         category: "FISH IT"
-    }
+    },
     { 
         id: 6, 
         name: "DOUBLE EXP", 
@@ -58,7 +58,7 @@ const products = [
         img: "https://placehold.co/300x300/1a1b3a/white?text=Pet",
         stock: "In Stock",
         category: "FISH IT"
-    }
+    },
     { 
         id: 7, 
         name: "MINI HOVERBOAT", 
@@ -68,7 +68,7 @@ const products = [
         img: "https://placehold.co/300x300/1a1b3a/white?text=Pet",
         stock: "In Stock",
         category: "FISH IT"
-    }FISH IT
+    },
     { 
         id: 8, 
         name: "SELL ANYWHERE", 
@@ -78,7 +78,7 @@ const products = [
         img: "https://placehold.co/300x300/1a1b3a/white?text=Pet",
         stock: "In Stock",
         category: "FISH IT"
-    }
+    },
     { 
         id: 9, 
         name: "HYPER BOAT PACK", 
