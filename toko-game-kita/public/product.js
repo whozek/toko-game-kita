@@ -28,6 +28,14 @@ const allProducts = [
             { name: "30 Day - Code", price: 17, isRate: false }
         ]
     },
+    {
+        id: 3,
+        name: "TOPUP ALL MAP ROBLOX",
+        category: "ALL",
+        img: "https://placehold.co/300x300/1a1b3a/white?text=Gun",
+        isVariant: false,
+        isRate: true
+    },
 ];
 
 window.allProducts = allProducts;
