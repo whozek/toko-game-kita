@@ -125,6 +125,12 @@
 
     <script src="product.js"></script>
     <script>
+        // Letakkan di bahagian atas script anda
+    const CURRENT_ROBUX_STOCK = "45,500"; // Tukar jumlah di sini
+
+        // Tambah ini di dalam window.onload anda
+        document.getElementById('robux-stock-display').innerText = CURRENT_ROBUX_STOCK + "+";
+
     // Tetapkan Rate per 1 Robux (Contoh: RM1.20 / 100 = 0.012)
     const RATE_PER_ROBUX = 0.023; 
 
