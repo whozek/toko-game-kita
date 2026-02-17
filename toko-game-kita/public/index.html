@@ -9,29 +9,42 @@
     <style>
         body { background-color: #0f1021; }
         .game-card { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); }
-        @keyframes glow {
-            0%, 100% { text-shadow: 0 0 5px #ff0000; }
-            50% { text-shadow: 0 0 20px #ff0000, 0 0 30px #ff8800; }
-        }
-        .animate-glow { animation: glow 2s ease-in-out infinite; }
+        .discount-tag { background: #22c55e; color: white; font-size: 10px; font-weight: bold; }
+        .popular-tag { background: #ef4444; color: white; font-size: 10px; font-weight: bold; }
+        
+    @keyframes glow {
+        0%, 100% { text-shadow: 0 0 5px #ff0000, 0 0 10px #ff4d00; }
+        50% { text-shadow: 0 0 20px #ff0000, 0 0 30px #ff8800; }
+    }
+    
+    .animate-pulse {
+        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite, glow 2s ease-in-out infinite;
+    }
     </style>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 </head>
 <body class="text-gray-200">
-    <div class="max-w-md mx-auto min-h-screen pb-20 p-4">
-        <div class="flex justify-between items-center mb-6">
-            <button onclick="logout()" class="text-xs bg-red-600/20 text-red-500 px-3 py-1 rounded-full border border-red-600/50">Logout</button>
-            <div class="text-right">
-                <p class="text-[10px] text-gray-400">Selamat Datang,</p>
-                <p id="user-display" class="text-sm font-bold text-white">User</p>
-            </div>
-        </div>
 
-        <div class="flex items-center space-x-3 mb-6 bg-gray-900/50 p-3 rounded-2xl border-l-4 border-red-600">
-            <span class="animate-bounce">🔥</span>
-            <h2 class="text-lg font-black italic uppercase text-red-500 animate-glow">Popular Items</h2>
+    <nav class="flex items-center justify-between px-6 py-4 border-b border-gray-800 bg-[#0f1021] sticky top-0 z-50">
+        <div class="flex items-center space-x-3">
+            <span id="user-display" class="text-[10px] text-gray-400"></span>
+            <button onclick="logout()" class="text-xs bg-gray-800 px-3 py-1 rounded-lg">Logout</button>
         </div>
+        <div class="flex items-center space-x-4">
+            <h1 class="text-xl font-extrabold text-white uppercase">KZMartMY<span class="text-red-500">STORE</span></h1>
+        </div>
+        <div class="flex items-center space-x-4">
+            <span class="bg-gray-700 px-3 py-1 rounded text-xs font-bold">RM</span>
+            <i class="fas fa-shopping-cart"></i>
+        </div>
+    </nav>
+
+    <div class="bg-gradient-to-r from-purple-900 to-indigo-900 p-2 text-center text-xs font-semibold">
+        <span class="text-yellow-400">★</span> Can Topup All Roblox Games <span class="text-orange-400 font-bold">(-Have Gifting Features-)</span>
+    </div>
+
+    <main class="p-6">
 
         <div class="flex space-x-2 overflow-x-auto pb-4 no-scrollbar">
             <button onclick="displayGames('ALL')" class="bg-red-600 text-white px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap">ALL</button>
