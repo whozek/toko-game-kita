@@ -2,7 +2,6 @@ const allProducts = [
     { 
         id: 111, 
         name: "FISH IT",
-        disc: "21%", 
         img: "https://placehold.co/300x300/1a1b3a/white?text=Gun",
         stock: "In Stock",
         category: "FISH IT", // Tambah ini

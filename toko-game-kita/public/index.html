@@ -119,209 +119,107 @@
     </div>
 </div>
 
-<script>
-    // 1. Firebase Configuration
-    const firebaseConfig = {
-        apiKey: "AIzaSyAzqZNdN2Hq6gq7CqKsBRE7isgXZVFQChU",
-        authDomain: "kzmart-auth.firebaseapp.com",
-        projectId: "kzmart-auth",
-        storageBucket: "kzmart-auth.firebasestorage.app",
-        messagingSenderId: "1084515236820",
-        appId: "1:1084515236820:web:582cb2a5cdb5181b5f9441",
-        measurementId: "G-PV2MFPwMCZ"
-    };
-
-    firebase.initializeApp(firebaseConfig);
-
-    // 2. Auth Guard
-    firebase.auth().onAuthStateChanged((user) => {
-        if (!user) {
-            window.location.href = 'login.html';
-        } else {
-            const userDisplay = document.getElementById('user-display');
-            if (userDisplay) userDisplay.innerText = user.email.split('@')[0];
-        }
-    });
-
-    function logout() {
-        firebase.auth().signOut().then(() => { 
-            window.location.href = 'login.html'; 
-        });
-    }
-
-    // 3. Fungsi Variant Modal (INI YANG BUAT BUTANG JALAN)
-    function openVariantModal(productId) {
-        const product = window.allProducts.find(p => p.id === productId);
-        if (!product) return;
-
-        const list = document.getElementById('variantList');
-        const title = document.getElementById('variantTitle');
-        
-        title.innerText = product.name;
-        list.innerHTML = product.variants.map(v => `
-            <button onclick="selectVariant('${v.name}', ${v.price}, ${v.isRate})" 
-                class="w-full flex justify-between items-center bg-[#0f1021] border border-gray-700 p-4 rounded-xl hover:border-red-500 transition mb-2 text-left">
-                <span class="text-sm font-medium text-white">${v.name}</span>
-                <span class="text-xs font-bold text-red-500">${v.isRate ? 'Rate' : 'RM'+v.price.toFixed(2)}</span>
-            </button>
-        `).join('');
-        
-        document.getElementById('variantModal').classList.remove('hidden');
-    }
-
-    function selectVariant(name, price, isRate) {
-        document.getElementById('variantModal').classList.add('hidden');
-        if(isRate) {
-            openOrderModal(name); 
-        } else {
-            window.open(`https://wa.me/60167481645?text=Nak%20beli%20${name}%20Harga:%20RM${price.toFixed(2)}`);
-        }
-    }
-
-    function closeVariantModal() {
-        document.getElementById('variantModal').classList.add('hidden');
-    }
-</script>
-
-    <script src="product.js"></script>
+<div id="variantModal" class="fixed inset-0 bg-black/90 z-[150] hidden flex items-center justify-center p-4">
+        <div class="bg-[#1a1b3a] w-full max-w-sm rounded-2xl p-6 border border-gray-700 shadow-2xl">
+            <h2 id="variantTitle" class="text-xl font-bold text-white mb-4 italic uppercase tracking-widest text-red-500">Pilih Varian</h2>
+            <div id="variantList" class="space-y-3 max-h-[60vh] overflow-y-auto pr-2">
+                </div>
+            <button onclick="closeVariantModal()" class="w-full mt-6 py-3 rounded-xl text-gray-400 font-bold text-sm bg-gray-800 hover:bg-gray-700 transition">Tutup</button>
+        </div>
+    </div>
 
     <script>
-        // TETAPKAN RATE DI SINI
-        const RATE_ROBUX = 0.023; 
-        let currentSelectedItem = "";
+        // 1. Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyAzqZNdN2Hq6gq7CqKsBRE7isgXZVFQChU",
+            authDomain: "kzmart-auth.firebaseapp.com",
+            projectId: "kzmart-auth",
+            storageBucket: "kzmart-auth.firebasestorage.app",
+            messagingSenderId: "1084515236820",
+            appId: "1:1084515236820:web:582cb2a5cdb5181b5f9441",
+            measurementId: "G-PV2MFPwMCZ"
+        };
+        firebase.initializeApp(firebaseConfig);
 
-        function calculatePrice() {
-            const robuxInput = document.getElementById('robuxAmount');
-            const priceInput = document.getElementById('orderPrice');
-            const jumlahRobux = parseFloat(robuxInput.value) || 0;
-            const totalHarga = jumlahRobux * RATE_ROBUX;
-            priceInput.value = "RM " + totalHarga.toFixed(2);
-        }
-
-        function openOrderModal(itemName) {
-            currentSelectedItem = itemName;
-            document.getElementById('orderModal').classList.remove('hidden');
-        }
-
-        function closeOrderModal() {
-            document.getElementById('orderModal').classList.add('hidden');
-        }
-
-        function sendWhatsAppOrder() {
-            const user = document.getElementById('robloxUser').value;
-            const robux = document.getElementById('robuxAmount').value;
-            const price = document.getElementById('orderPrice').value;
-            const map = document.getElementById('mapName').value;
-
-            if(!user || !robux || !map) {
-                alert("Sila isi maklumat Roblox anda!");
-                return;
+        // 2. Auth Guard
+        firebase.auth().onAuthStateChanged((user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+            } else {
+                const userDisplay = document.getElementById('user-display');
+                if (userDisplay) userDisplay.innerText = user.email.split('@')[0];
             }
+        });
 
-            const noWasap = "60167481645"; 
-            const mesej = `*PESANAN & BUKTI BAYARAN*%0A` +
-                  `--------------------------%0A` +
-                  `*Status:* SUDAH BAYAR ✅%0A` +
-                  `*Item:* ${currentSelectedItem}%0A` +
-                  `*Username:* ${user}%0A` +
-                  `*Jumlah:* ${robux} Robux%0A` +
-                  `*Map:* ${map}%0A` +
-                  `*Total:* ${price}%0A` +
-                  `--------------------------%0A` +
-                  `Saya lampirkan resit bayaran di bawah:`;
-
-            window.open(`https://wa.me/${noWasap}?text=${mesej}`, '_blank');
-            closeOrderModal();
+        function logout() {
+            firebase.auth().signOut().then(() => { window.location.href = 'login.html'; });
         }
 
-        function filterCategory(cat) {
-            document.querySelectorAll('.cat-btn').forEach(btn => {
-                btn.classList.remove('bg-red-600');
-                btn.classList.add('bg-gray-800');
-            });
-            event.currentTarget.classList.remove('bg-gray-800');
-            event.currentTarget.classList.add('bg-red-600');
-            displayGames(cat);
-        }
-
+        // 3. Fungsi Variant Modal
         function openVariantModal(productId) {
-    const product = allProducts.find(p => p.id === productId);
-    const list = document.getElementById('variantList');
-    document.getElementById('variantTitle').innerText = product.name;
-    
-    list.innerHTML = product.variants.map(v => `
-        <button onclick="selectVariant('${v.name}', ${v.price}, ${v.isRate})" 
-            class="w-full flex justify-between items-center bg-[#0f1021] border border-gray-700 p-4 rounded-xl hover:border-red-500 transition">
-            <span class="text-sm font-medium text-white">${v.name}</span>
-            <span class="text-xs font-bold text-red-500">${v.isRate ? 'Rate' : 'RM'+v.price.toFixed(2)}</span>
-        </button>
-    `).join('');
-    
-    document.getElementById('variantModal').classList.remove('hidden');
-}
+            // Kita cari dari window.allProducts yang diimport dari product.js
+            const product = window.allProducts.find(p => p.id === productId);
+            if (!product) return;
 
-function selectVariant(name, price, isRate) {
-    closeVariantModal();
-    if(isRate) {
-        openOrderModal(name); // Buka borang Robux jika item jenis Rate
-    } else {
-        window.open(`https://wa.me/60167481645?text=Nak%20beli%20${name}%20Harga:%20RM${price.toFixed(2)}`);
-    }
-}
-
-function closeVariantModal() {
-    document.getElementById('variantModal').classList.add('hidden');
-}
-
-// Kemaskini butang dalam displayGames
-function displayGames(filter = 'ALL') {
-    const list = document.getElementById('game-list');
-    if (!list) return;
-
-    // Ambil data dari window.allProducts
-    const data = window.allProducts || [];
-    
-    const filtered = filter === 'ALL' 
-        ? data 
-        : data.filter(p => p.category === filter);
-
-    if (filtered.length === 0) {
-        list.innerHTML = "<p class='text-center col-span-2 text-gray-500 py-10'>Tiada produk dalam kategori ini.</p>";
-        return;
-    }
-
-    list.innerHTML = filtered.map(game => {
-        // Tentukan apa butang buat
-        let action;
-        if (game.isVariant) {
-            action = `openVariantModal(${game.id})`;
-        } else if (game.isRate) {
-            action = `openOrderModal('${game.name}')`;
-        } else {
-            action = `window.open('https://wa.me/60167481645?text=Nak%20beli%20${game.name}')`;
+            const list = document.getElementById('variantList');
+            document.getElementById('variantTitle').innerText = product.name;
+            
+            list.innerHTML = product.variants.map(v => `
+                <button onclick="selectVariant('${v.name}', ${v.price}, ${v.isRate})" 
+                    class="w-full flex justify-between items-center bg-[#0f1021] border border-gray-700 p-4 rounded-xl hover:border-red-500 transition text-left group">
+                    <span class="text-sm font-medium text-white group-hover:text-red-400">${v.name}</span>
+                    <span class="text-xs font-bold text-red-500">${v.isRate ? 'RATE' : 'RM'+v.price.toFixed(2)}</span>
+                </button>
+            `).join('');
+            
+            document.getElementById('variantModal').classList.remove('hidden');
         }
 
-        return `
-            <div class="game-card rounded-2xl overflow-hidden p-3 shadow-lg text-center border border-gray-800">
-                <img src="${game.img}" class="w-full h-24 object-contain my-2">
-                <h3 class="text-[12px] font-bold mb-3 text-gray-200">${game.name}</h3>
-                <button onclick="${action}" class="w-full bg-red-600 py-2 rounded-lg text-[10px] font-bold uppercase text-white hover:bg-red-500 transition shadow-lg shadow-red-900/20">
-                    ${game.isVariant ? 'See Variants' : 'Buy Now'}
-                </button>
-            </div>
-        `;
-    }).join('');
-}
+        function selectVariant(name, price, isRate) {
+            closeVariantModal();
+            if(isRate) {
+                openOrderModal(name); 
+            } else {
+                window.open(`https://wa.me/60167481645?text=Nak%20beli%20${name}%20Harga:%20RM${price.toFixed(2)}`);
+            }
+        }
 
+        function closeVariantModal() {
+            document.getElementById('variantModal').classList.add('hidden');
+        }
+
+        // 4. Fungsi Display Produk Utama
+        function displayGames(filter = 'ALL') {
+            const list = document.getElementById('game-list');
+            const data = window.allProducts || [];
+            
+            const filtered = filter === 'ALL' ? data : data.filter(p => p.category === filter);
+
+            list.innerHTML = filtered.map(game => {
+                let action;
+                if (game.isVariant) {
+                    action = `openVariantModal(${game.id})`;
+                } else if (game.isRate) {
+                    action = `openOrderModal('${game.name}')`;
+                } else {
+                    action = `window.open('https://wa.me/60167481645?text=Nak%20beli%20${game.name}')`;
+                }
+
+                return `
+                    <div class="game-card rounded-2xl overflow-hidden p-3 shadow-lg text-center border border-gray-800">
+                        <img src="${game.img}" class="w-full h-24 object-contain my-2">
+                        <h3 class="text-[12px] font-bold mb-3 text-gray-200">${game.name}</h3>
+                        <button onclick="${action}" class="w-full bg-red-600 py-2 rounded-lg text-[10px] font-bold uppercase text-white hover:bg-red-500 transition shadow-lg shadow-red-900/20">
+                            ${game.isVariant ? 'See Variants' : 'Buy Now'}
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Jalankan fungsi bila page siap
         window.onload = () => { displayGames('ALL'); };
     </script>
-    <div id="variantModal" class="fixed inset-0 bg-black/90 z-[150] hidden flex items-center justify-center p-4">
-    <div class="bg-[#1a1b3a] w-full max-w-sm rounded-2xl p-6 border border-gray-700">
-        <h2 id="variantTitle" class="text-xl font-bold text-white mb-4 italic uppercase">Pilih Varian</h2>
-        <div id="variantList" class="max-h-[60vh] overflow-y-auto pr-2">
-            </div>
-        <button onclick="closeVariantModal()" class="w-full mt-4 py-2 text-gray-400 text-sm bg-gray-800 rounded-lg font-bold">Tutup</button>
-    </div>
-</div>
+    <script src="product.js"></script>
 </body>
 </html>
