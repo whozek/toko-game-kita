@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KZMartMY - RM Store</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { background-color: #0f1021; }
+        .game-card { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .discount-tag { background: #22c55e; color: white; font-size: 10px; font-weight: bold; }
+        .popular-tag { background: #ef4444; color: white; font-size: 10px; font-weight: bold; }
+        
+    @keyframes glow {
+        0%, 100% { text-shadow: 0 0 5px #ff0000, 0 0 10px #ff4d00; }
+        50% { text-shadow: 0 0 20px #ff0000, 0 0 30px #ff8800; }
+    }
+    
+    .animate-pulse {
+        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite, glow 2s ease-in-out infinite;
+    }
+    </style>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+</head>
+<body class="text-gray-200">
+
+    <nav class="flex items-center justify-between px-6 py-4 border-b border-gray-800 bg-[#0f1021] sticky top-0 z-50">
+        <div class="flex items-center space-x-3">
+            <span id="user-display" class="text-[10px] text-gray-400"></span>
+            <button onclick="logout()" class="text-xs bg-gray-800 px-3 py-1 rounded-lg">Logout</button>
+        </div>
+        <div class="flex items-center space-x-4">
+            <h1 class="text-xl font-extrabold text-white uppercase">KZMartMY<span class="text-red-500">STORE</span></h1>
+        </div>
+        <div class="flex items-center space-x-4">
+            <span class="bg-gray-700 px-3 py-1 rounded text-xs font-bold">RM</span>
+            <i class="fas fa-shopping-cart"></i>
+        </div>
+    </nav>
+
+    <div class="bg-gradient-to-r from-purple-900 to-indigo-900 p-2 text-center text-xs font-semibold">
+        <span class="text-yellow-400">★</span> Can Topup All Roblox Games <span class="text-orange-400 font-bold">(-Have Gifting Features-)</span>
+    </div>
+
+    <main class="p-6">
+
+        <div class="flex space-x-2 overflow-x-auto pb-4 no-scrollbar">
+            <button onclick="displayGames('ALL')" class="bg-red-600 text-white px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap">ALL</button>
+            <button onclick="displayGames('FISH IT')" class="bg-gray-800 text-gray-400 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap">FISH IT</button>
+            <button onclick="displayGames('REDFINGER')" class="bg-gray-800 text-gray-400 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap">REDFINGER</button>
+        </div>
+
+        <div id="game-list" class="grid grid-cols-2 gap-4">
+            </div>
+    </div>
+
+    <div id="variantModal" class="fixed inset-0 bg-black/90 z-[150] hidden flex items-center justify-center p-4">
+        <div class="bg-[#1a1b3a] w-full max-w-sm rounded-2xl p-6 border border-gray-700">
+            <h2 id="variantTitle" class="text-xl font-bold text-white mb-4 italic text-red-500">PILIH ITEM</h2>
+            <div id="variantList" class="space-y-3 max-h-[60vh] overflow-y-auto"></div>
+            <button onclick="closeVariantModal()" class="w-full mt-6 py-3 rounded-xl text-gray-400 font-bold bg-gray-800">Tutup</button>
+        </div>
+    </div>
+
+    <script src="product.js"></script>
+    <script>
+    // Tetapkan Rate per 1 Robux (Contoh: RM1.20 / 100 = 0.012)
+    const RATE_PER_ROBUX = 0.023; 
+
+    // --- Firebase & Auth (Kekalkan yang asal) ---
+    const firebaseConfig = {
+        apiKey: "AIzaSyAzqZNdN2Hq6gq7CqKsBRE7isgXZVFQChU",
+        authDomain: "kzmart-auth.firebaseapp.com",
+        projectId: "kzmart-auth",
+        storageBucket: "kzmart-auth.firebasestorage.app",
+        messagingSenderId: "1084515236820",
+        appId: "1:1084515236820:web:582cb2a5cdb5181b5f9441",
+        measurementId: "G-PV2MFPwMCZ"
+    };
+    firebase.initializeApp(firebaseConfig);
+    firebase.auth().onAuthStateChanged((user) => {
+        if (!user) { window.location.href = 'login.html'; }
+        else { document.getElementById('user-display').innerText = user.email.split('@')[0]; }
+    });
+
+    // --- FUNGSI UTAMA ---
+
+    function displayGames(filter = 'ALL') {
+        const list = document.getElementById('game-list');
+        const data = window.allProducts || [];
+        const filtered = filter === 'ALL' ? data : data.filter(p => p.category === filter);
+
+        list.innerHTML = filtered.map(game => {
+            const action = game.isVariant ? `openVariantModal(${game.id})` : `openOrderModal('${game.name}')`;
+            return `
+                <div class="game-card rounded-2xl p-3 text-center border border-gray-800">
+                    <img src="${game.img}" class="w-full h-20 object-contain mb-2">
+                    <h3 class="text-[10px] font-bold text-gray-300 mb-2">${game.name}</h3>
+                    <button onclick="${action}" class="w-full bg-red-600 py-2 rounded-lg text-[10px] font-bold text-white uppercase">
+                        ${game.isVariant ? 'See Variants' : 'Order Now'}
+                    </button>
+                </div>`;
+        }).join('');
+    }
+
+    function openVariantModal(id) {
+        const product = window.allProducts.find(p => p.id === id);
+        document.getElementById('variantTitle').innerText = product.name;
+        document.getElementById('variantList').innerHTML = product.variants.map(v => {
+            const finalPrice = v.isRate ? (v.price * RATE_PER_ROBUX).toFixed(2) : v.price.toFixed(2);
+            return `
+                <button onclick="openOrderModal('${v.name}', ${v.price}, ${v.isRate})" 
+                    class="w-full flex justify-between bg-[#0f1021] border border-gray-700 p-4 rounded-xl text-white text-sm hover:border-red-500 transition">
+                    <span>${v.name}</span>
+                    <span class="text-red-500 font-bold">RM ${finalPrice}</span>
+                </button>`;
+        }).join('');
+        document.getElementById('variantModal').classList.remove('hidden');
+    }
+
+    // FUNGSI BORANG ORDER (Username, Robux, Harga, Map)
+    function openOrderModal(itemName, amount = 0, isRate = false) {
+        closeVariantModal();
+        const finalPrice = isRate ? (amount * RATE_PER_ROBUX).toFixed(2) : amount.toFixed(2);
+        
+        // Gantikan isi dalam modal order (Pastikan anda ada div id="orderModal" dalam HTML)
+        const orderModal = document.getElementById('orderModal');
+        orderModal.innerHTML = `
+            <div class="bg-[#1a1b3a] w-full max-w-sm rounded-2xl p-6 border border-gray-700 shadow-2xl">
+                <h2 class="text-xl font-bold text-white mb-4">Order Details</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label class="text-xs text-gray-400">Username Roblox</label>
+                        <input type="text" id="orderUser" class="w-full bg-[#0f1021] border border-gray-700 p-3 rounded-xl text-white outline-none focus:border-red-500" placeholder="Contoh: RobloxUser123">
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-xs text-gray-400">Jumlah Robux</label>
+                            <input type="number" id="orderRobux" value="${amount}" readonly class="w-full bg-gray-800 border border-gray-700 p-3 rounded-xl text-gray-400 cursor-not-allowed">
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-400">Harga (RM)</label>
+                            <input type="text" id="orderPrice" value="${finalPrice}" readonly class="w-full bg-gray-800 border border-gray-700 p-3 rounded-xl text-gray-400">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-400">Nama Map / Game</label>
+                        <input type="text" id="orderMap" class="w-full bg-[#0f1021] border border-gray-700 p-3 rounded-xl text-white outline-none focus:border-red-500" placeholder="Contoh: Fisch / Pet Sim 99">
+                    </div>
+                    <button onclick="sendWhatsApp('${itemName}')" class="w-full bg-green-600 hover:bg-green-500 py-3 rounded-xl font-bold text-white transition">Hantar Order ke WhatsApp</button>
+                    <button onclick="closeOrderModal()" class="w-full text-gray-500 text-xs">Batalkan</button>
+                </div>
+            </div>
+        `;
+        orderModal.classList.remove('hidden');
+    }
+
+    function sendWhatsApp(itemName) {
+        const user = document.getElementById('orderUser').value;
+        const robux = document.getElementById('orderRobux').value;
+        const price = document.getElementById('orderPrice').value;
+        const map = document.getElementById('orderMap').value;
+
+        if(!user || !map) {
+            alert("Sila masukkan Username dan Nama Map!");
+            return;
+        }
+
+        const msg = `Halo KZMartMY!%0A%0A` +
+                    `*ORDER GIFT IN-GAME*%0A` +
+                    `Item: ${itemName}%0A` +
+                    `Username: ${user}%0A` +
+                    `Jumlah Robux: ${robux}%0A` +
+                    `Harga: RM${price}%0A` +
+                    `Map: ${map}`;
+        
+        window.open(`https://wa.me/60167481645?text=${msg}`);
+    }
+
+    function closeOrderModal() { document.getElementById('orderModal').classList.add('hidden'); }
+    function closeVariantModal() { document.getElementById('variantModal').classList.add('hidden'); }
+
+    window.onload = () => { setTimeout(() => displayGames('ALL'), 500); };
+</script>
+<div id="variantModal" class="fixed inset-0 bg-black/90 z-[150] hidden flex items-center justify-center p-4">
+    <div class="bg-[#1a1b3a] w-full max-w-sm rounded-2xl p-6 border border-gray-700 shadow-2xl">
+        <h2 id="variantTitle" class="text-xl font-bold text-white mb-4 italic text-red-500 uppercase">Pilih Varian</h2>
+        <div id="variantList" class="space-y-3"></div>
+        <button onclick="closeVariantModal()" class="w-full mt-6 py-2 text-gray-500 text-xs uppercase font-bold tracking-widest">Tutup</button>
+    </div>
+</div>
+
+<div id="orderModal" class="fixed inset-0 bg-black/90 z-[200] hidden flex items-center justify-center p-4">
+    </div>
+</body>
+</html>

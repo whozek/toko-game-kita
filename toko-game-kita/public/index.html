@@ -3,196 +3,632 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KZMartMY - RM Store</title>
+    <title>KZMartMY - Cheap Robux Store</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { background-color: #0f1021; }
-        .game-card { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .discount-tag { background: #22c55e; color: white; font-size: 10px; font-weight: bold; }
-        .popular-tag { background: #ef4444; color: white; font-size: 10px; font-weight: bold; }
         
-    @keyframes glow {
-        0%, 100% { text-shadow: 0 0 5px #ff0000, 0 0 10px #ff4d00; }
-        50% { text-shadow: 0 0 20px #ff0000, 0 0 30px #ff8800; }
-    }
+        body {
+    /* Masukkan link gambar anda di dalam url('') */
+    background: linear-gradient(rgba(5, 6, 15, 0.8), rgba(5, 6, 15, 0.8)), 
+                url('https://cdn.discordapp.com/attachments/1154147488341704745/1473548624871821352/IMG_2573.png?ex=69969c99&is=69954b19&hm=405e08f1e11d189566b86ce7e0099dd260e704ed05ba65af29439e242cce04ef&');
     
-    .animate-pulse {
-        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite, glow 2s ease-in-out infinite;
-    }
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed; /* Supaya gambar tak bergerak bila scroll */
+    background-repeat: no-repeat;
+    color: #e2e8f0;
+    font-family: 'Inter', sans-serif;
+}
+
+        
+        /* 1. Marquee Animation */
+        .marquee-container { width: 100%; overflow: hidden; background: rgba(239, 68, 68, 0.1); padding: 8px 0; border: 1px solid rgba(239, 68, 68, 0.2); }
+        .marquee-text { display: inline-block; white-space: nowrap; animation: marquee 20s linear infinite; font-weight: 800; color: #ef4444; font-style: italic; text-transform: uppercase; font-size: 12px; }
+        @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+
+        /* 2. Pro Product Card (Glassmorphism) */
+        .game-card {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .game-card:hover { transform: translateY(-8px); border-color: #ef4444; box-shadow: 0 15px 30px rgba(0,0,0,0.5); }
+        .game-card img { transition: transform 0.4s ease; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.3)); }
+        .game-card:hover img { transform: scale(1.1) rotate(3deg); }
+
+        /* 3. Stock Widget & Glow */
+        .stock-box { background: rgba(255, 255, 255, 0.03); border-left: 4px solid #f59e0b; }
+        .robux-glow { color: #f59e0b; text-shadow: 0 0 10px rgba(245, 158, 11, 0.4); }
+        
+        .star-rating {
+    color: #ffb800; /* Warna kuning Robux */
+    font-size: 10px;
+    filter: drop-shadow(0 0 5px rgba(255, 184, 0, 0.3));
+}
+.feedback-box {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.star-input i {
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.star-input i.active {
+    color: #ffb800;
+    text-shadow: 0 0 10px rgba(255, 184, 0, 0.5);
+}
+.feedback-card-live {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    animation: fadeIn 0.5s ease-out;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        
+        select#categorySelect {
+    cursor: pointer;
+    background-image: linear-gradient(45deg, transparent 50%, #ef4444 50%),
+                      linear-gradient(135deg, #ef4444 50%, transparent 50%);
+    background-position: calc(100% - 20px) calc(1em + 2px),
+                         calc(100% - 15px) calc(1em + 2px);
+    background-size: 5px 5px, 5px 5px;
+    background-repeat: no-repeat;
+}
+
+/* Gelapkan pilihan menu dalam dropdown */
+select#categorySelect option {
+    background-color: #05060f;
+    color: white;
+    padding: 10px;
+}
+        
     </style>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 </head>
-<body class="text-gray-200">
-
-    <nav class="flex items-center justify-between px-6 py-4 border-b border-gray-800 bg-[#0f1021] sticky top-0 z-50">
-        <div class="flex items-center space-x-3">
-            <span id="user-display" class="text-[10px] text-gray-400"></span>
-            <button onclick="logout()" class="text-xs bg-gray-800 px-3 py-1 rounded-lg">Logout</button>
-        </div>
-        <div class="flex items-center space-x-4">
-            <h1 class="text-xl font-extrabold text-white uppercase">KZMartMY<span class="text-red-500">STORE</span></h1>
-        </div>
-        <div class="flex items-center space-x-4">
-            <span class="bg-gray-700 px-3 py-1 rounded text-xs font-bold">RM</span>
-            <i class="fas fa-shopping-cart"></i>
-        </div>
-    </nav>
-
-    <div class="bg-gradient-to-r from-purple-900 to-indigo-900 p-2 text-center text-xs font-semibold">
-        <span class="text-yellow-400">★</span> Can Topup All Roblox Games <span class="text-orange-400 font-bold">(-Have Gifting Features-)</span>
-    </div>
-
-    <main class="p-6">
-
-        <div class="flex space-x-2 overflow-x-auto pb-4 no-scrollbar">
-            <button onclick="displayGames('ALL')" class="bg-red-600 text-white px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap">ALL</button>
-            <button onclick="displayGames('FISH IT')" class="bg-gray-800 text-gray-400 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap">FISH IT</button>
-            <button onclick="displayGames('REDFINGER')" class="bg-gray-800 text-gray-400 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap">REDFINGER</button>
-        </div>
-
-        <div id="game-list" class="grid grid-cols-2 gap-4">
+<body>
+    
+    <div class="max-w-md mx-auto min-h-screen pb-24 p-4">
+        <div class="flex justify-between items-center mb-6">
+            <button onclick="logout()" class="text-[10px] font-black uppercase tracking-tighter bg-red-600/10 text-red-500 px-4 py-2 rounded-full border border-red-600/30">Logout</button>
+            <div class="text-right">
+                <p id="user-display" class="text-sm font-black text-white italic">Guest User</p>
+                <p class="text-[9px] text-green-500 font-bold tracking-widest uppercase">Account Verified</p>
             </div>
+        </div> 
+        <div class="w-full text-center mb-6">
+            <h1 class="text-3xl font-black italic text-white uppercase tracking-tighter drop-shadow-[0_0_10px_rgba(239,68,68,0.3)]">
+    KZMART<span class="text-red-600">MY</span>
+</h1>
+        </div>
+
+        <div class="marquee-container rounded-lg mb-4">
+            <div class="marquee-text">
+                ⭐  Can Topup All Roblox Games/Map &nbsp;&nbsp;&nbsp;&nbsp; ( ❗️ Must Have Gifting Features In Games/Map ❗️ )  ⭐ &nbsp;&nbsp;&nbsp;&nbsp; ⭐  Trusted Seller KZMartMY  ⭐
+            </div>
+        </div>
+        
+        <div class="px-4 mb-6">
+    <div class="bg-black/60 border border-red-600/30 rounded-2xl p-4 flex justify-between items-center shadow-lg backdrop-blur-md">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 bg-red-600/20 rounded-xl flex items-center justify-center overflow-hidden">
+    <img src="IMG_3571.png" class="w-6 h-6 object-contain" alt="Robux">
+</div>
+
+            <div>
+                <p class="text-[10px] text-gray-500 font-bold uppercase tracking-tight">Current Stock</p>
+                <h2 id="stock-display" class="text-lg font-black text-white leading-none">0</h2>
+            </div>
+        </div>
+        
+        <div class="text-right">
+            <p class="text-[10px] text-gray-500 font-bold uppercase tracking-tight">Status</p>
+            <div id="status-display" class="text-[10px] font-black px-2 py-1 rounded-lg bg-green-500/10 text-green-500 inline-block border border-green-500/20">
+                LOADING..
+            </div>
+        </div>
+    </div>
+</div>
+
+
+        <div class="px-4 mb-6">
+    <div class="relative">
+        <select id="categorySelect" onchange="filterGames(this.value)" 
+            class="w-full bg-black/60 border border-white/10 text-white py-4 px-5 rounded-2xl appearance-none focus:outline-none focus:border-red-600/50 shadow-lg backdrop-blur-md font-bold uppercase tracking-widest text-sm">
+            <option value="ALL">📂 SEMUA KATEGORI</option>
+            <option value="ROBUX">💰 ROBUX (ALL MAP)</option>
+            <option value="REDFINGER">🚀 REDFINGER KEY</option>
+            </select>
+        
+        <div class="absolute inset-y-0 right-0 flex items-center px-5 pointer-events-none">
+            <i class="fas fa-chevron-down text-red-600"></i>
+        </div>
+    </div>
+</div>
+
+
+        <div id="game-list" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 p-4">
     </div>
 
-    <div id="variantModal" class="fixed inset-0 bg-black/90 z-[150] hidden flex items-center justify-center p-4">
-        <div class="bg-[#1a1b3a] w-full max-w-sm rounded-2xl p-6 border border-gray-700">
-            <h2 id="variantTitle" class="text-xl font-bold text-white mb-4 italic text-red-500">PILIH ITEM</h2>
-            <div id="variantList" class="space-y-3 max-h-[60vh] overflow-y-auto"></div>
-            <button onclick="closeVariantModal()" class="w-full mt-6 py-3 rounded-xl text-gray-400 font-bold bg-gray-800">Tutup</button>
+    
+    <div class="mt-12 mb-10 px-2">
+    <div class="flex items-center space-x-2 mb-6">
+        <div class="h-1 w-8 bg-red-600 rounded-full"></div>
+        <h2 class="text-sm font-black italic uppercase text-white tracking-widest">Live Feedback</h2>
+    </div>
+
+    <div class="bg-white/5 p-5 rounded-3xl border border-white/10 mb-8">
+        <p class="text-[10px] font-bold text-gray-400 mb-3 uppercase tracking-widest text-center">Share your experience</p>
+        
+        <div id="starSelection" class="star-input flex justify-center space-x-2 mb-4 text-xl text-gray-600">
+            <i class="fas fa-star" onclick="setRating(1)"></i>
+            <i class="fas fa-star" onclick="setRating(2)"></i>
+            <i class="fas fa-star" onclick="setRating(3)"></i>
+            <i class="fas fa-star" onclick="setRating(4)"></i>
+            <i class="fas fa-star" onclick="setRating(5)"></i>
+        </div>
+
+        <input type="text" id="feedbackName" placeholder="Your Name" class="w-full bg-[#0f1021] border border-white/10 p-3 rounded-xl text-white text-xs mb-3 outline-none focus:border-red-500">
+        <textarea id="feedbackText" placeholder="Write your review here..." class="w-full bg-[#0f1021] border border-white/10 p-3 rounded-xl text-white text-xs mb-3 h-20 outline-none focus:border-red-500"></textarea>
+        
+        <button onclick="submitFeedback()" class="w-full bg-red-600 py-3 rounded-xl text-[10px] font-black text-white uppercase tracking-widest hover:bg-red-500 transition">
+            Post Review
+        </button>
+    </div>
+
+    <div id="liveFeedbackList" class="space-y-3 text-left">
+        <p class="text-center text-gray-600 text-[10px]">Loading feedbacks...</p>
+    </div>
+</div>
+
+
+    <div id="variantModal" class="fixed inset-0 bg-black/95 z-[150] hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-[#0f1021] w-full max-w-sm rounded-3xl p-6 border border-white/10 shadow-2xl">
+            <h2 id="variantTitle" class="text-xl font-black text-red-500 mb-4 italic uppercase tracking-tighter">Pilih Varian</h2>
+            <div id="variantList" class="space-y-3 max-h-[60vh] overflow-y-auto pr-1"></div>
+            <button onclick="closeVariantModal()" class="w-full mt-6 py-3 text-gray-500 text-[10px] font-bold uppercase tracking-widest">Kembali</button>
         </div>
     </div>
 
+    <div id="orderModal" class="fixed inset-0 bg-black/95 z-[200] hidden flex items-center justify-center p-4 backdrop-blur-md">
+        </div>
+        
+        <audio id="clickSound" preload="auto">
+    <source src="click-sound.mp3" type="audio/mpeg">
+</audio>
+
+        
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     <script src="product.js"></script>
     <script>
-    // Tetapkan Rate per 1 Robux (Contoh: RM1.20 / 100 = 0.012)
-    const RATE_PER_ROBUX = 0.023; 
-
-    // --- Firebase & Auth (Kekalkan yang asal) ---
-    const firebaseConfig = {
-        apiKey: "AIzaSyAzqZNdN2Hq6gq7CqKsBRE7isgXZVFQChU",
-        authDomain: "kzmart-auth.firebaseapp.com",
-        projectId: "kzmart-auth",
-        storageBucket: "kzmart-auth.firebasestorage.app",
-        messagingSenderId: "1084515236820",
-        appId: "1:1084515236820:web:582cb2a5cdb5181b5f9441",
-        measurementId: "G-PV2MFPwMCZ"
-    };
-    firebase.initializeApp(firebaseConfig);
-    firebase.auth().onAuthStateChanged((user) => {
-        if (!user) { window.location.href = 'login.html'; }
-        else { document.getElementById('user-display').innerText = user.email.split('@')[0]; }
-    });
-
-    // --- FUNGSI UTAMA ---
-
-    function displayGames(filter = 'ALL') {
-        const list = document.getElementById('game-list');
-        const data = window.allProducts || [];
-        const filtered = filter === 'ALL' ? data : data.filter(p => p.category === filter);
-
-        list.innerHTML = filtered.map(game => {
-            const action = game.isVariant ? `openVariantModal(${game.id})` : `openOrderModal('${game.name}')`;
-            return `
-                <div class="game-card rounded-2xl p-3 text-center border border-gray-800">
-                    <img src="${game.img}" class="w-full h-20 object-contain mb-2">
-                    <h3 class="text-[10px] font-bold text-gray-300 mb-2">${game.name}</h3>
-                    <button onclick="${action}" class="w-full bg-red-600 py-2 rounded-lg text-[10px] font-bold text-white uppercase">
-                        ${game.isVariant ? 'See Variants' : 'Order Now'}
-                    </button>
-                </div>`;
-        }).join('');
-    }
-
-    function openVariantModal(id) {
-        const product = window.allProducts.find(p => p.id === id);
-        document.getElementById('variantTitle').innerText = product.name;
-        document.getElementById('variantList').innerHTML = product.variants.map(v => {
-            const finalPrice = v.isRate ? (v.price * RATE_PER_ROBUX).toFixed(2) : v.price.toFixed(2);
-            return `
-                <button onclick="openOrderModal('${v.name}', ${v.price}, ${v.isRate})" 
-                    class="w-full flex justify-between bg-[#0f1021] border border-gray-700 p-4 rounded-xl text-white text-sm hover:border-red-500 transition">
-                    <span>${v.name}</span>
-                    <span class="text-red-500 font-bold">RM ${finalPrice}</span>
-                </button>`;
-        }).join('');
-        document.getElementById('variantModal').classList.remove('hidden');
-    }
-
-    // FUNGSI BORANG ORDER (Username, Robux, Harga, Map)
-    function openOrderModal(itemName, amount = 0, isRate = false) {
-        closeVariantModal();
-        const finalPrice = isRate ? (amount * RATE_PER_ROBUX).toFixed(2) : amount.toFixed(2);
+        const RATE_PER_ROBUX = 0.023;
         
-        // Gantikan isi dalam modal order (Pastikan anda ada div id="orderModal" dalam HTML)
-        const orderModal = document.getElementById('orderModal');
-        orderModal.innerHTML = `
-            <div class="bg-[#1a1b3a] w-full max-w-sm rounded-2xl p-6 border border-gray-700 shadow-2xl">
-                <h2 class="text-xl font-bold text-white mb-4">Order Details</h2>
-                <div class="space-y-4">
-                    <div>
-                        <label class="text-xs text-gray-400">Username Roblox</label>
-                        <input type="text" id="orderUser" class="w-full bg-[#0f1021] border border-gray-700 p-3 rounded-xl text-white outline-none focus:border-red-500" placeholder="Contoh: RobloxUser123">
-                    </div>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="text-xs text-gray-400">Jumlah Robux</label>
-                            <input type="number" id="orderRobux" value="${amount}" readonly class="w-full bg-gray-800 border border-gray-700 p-3 rounded-xl text-gray-400 cursor-not-allowed">
-                        </div>
-                        <div>
-                            <label class="text-xs text-gray-400">Harga (RM)</label>
-                            <input type="text" id="orderPrice" value="${finalPrice}" readonly class="w-full bg-gray-800 border border-gray-700 p-3 rounded-xl text-gray-400">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="text-xs text-gray-400">Nama Map / Game</label>
-                        <input type="text" id="orderMap" class="w-full bg-[#0f1021] border border-gray-700 p-3 rounded-xl text-white outline-none focus:border-red-500" placeholder="Contoh: Fisch / Pet Sim 99">
-                    </div>
-                    <button onclick="sendWhatsApp('${itemName}')" class="w-full bg-green-600 hover:bg-green-500 py-3 rounded-xl font-bold text-white transition">Hantar Order ke WhatsApp</button>
-                    <button onclick="closeOrderModal()" class="w-full text-gray-500 text-xs">Batalkan</button>
-                </div>
-            </div>
-        `;
-        orderModal.classList.remove('hidden');
-    }
+        // Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyAzqZNdN2Hq6gq7CqKsBRE7isgXZVFQChU",
+            authDomain: "kzmart-auth.firebaseapp.com",
+            projectId: "kzmart-auth",
+            storageBucket: "kzmart-auth.firebasestorage.app",
+            messagingSenderId: "1084515236820",
+            appId: "1:1084515236820:web:582cb2a5cdb5181b5f9441"
+        };
+        firebase.initializeApp(firebaseConfig);
+        
+        firebase.auth().onAuthStateChanged((user) => {
+    if (user) {
+        const db = firebase.firestore();
+        
+        // Simpan/Update data user ke koleksi 'users'
+        // Ini akan automatik buat koleksi 'users' jika belum ada
+        db.collection("users").doc(user.uid).set({
+            email: user.email,
+            lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true }) 
+        .then(() => {
+            console.log("User record updated");
+            // Selepas record ada, baru tarik baki wallet
+            fetchUserWallet(user.uid);
+        });
 
-    function sendWhatsApp(itemName) {
+    } else {
+        // Logik jika user tidak login
+        window.location.href = "login.html"; // Jika anda ada page login asing
+    }
+});
+
+function filterGames(category) {
+    // Jalankan bunyi klik bila tukar kategori
+    playClick();
+    
+    // Panggil fungsi displayGames dengan kategori yang dipilih
+    displayGames(category);
+}
+
+
+        firebase.auth().onAuthStateChanged((user) => {
+            if (!user) { window.location.href = 'login.html'; }
+            else { document.getElementById('user-display').innerText = user.email.split('@')[0]; }
+        });
+
+        function logout() { firebase.auth().signOut().then(() => { window.location.href = 'login.html'; }); }
+
+        // --- 1. Paparan Utama ---
+// Tambah 'async' di depan function
+async function displayGames(filter = 'ALL') {
+    const list = document.getElementById('game-list');
+    
+    // 1. TUKAR 'const' KEPADA 'let' supaya data boleh diubah/ditapis
+    let data = window.allProducts || []; 
+    const db = firebase.firestore();
+
+    // 2. FILTER produk yang isVisible sahaja (ON/OFF)
+    data = data.filter(p => p.isVisible !== false);
+
+    // 3. FILTER mengikut kategori (Hanya satu pengisytiharan 'const filtered')
+    const filtered = filter === 'ALL' ? data : data.filter(p => p.category === filter);
+
+    list.innerHTML = ""; // Kosongkan list dulu sebelum lukis baru
+
+    for (const game of filtered) {
+        let stockText = "Checking...";
+        let stockColor = "text-gray-500";
+
+        // Ambil data stok dari Firestore
+        try {
+            const stockDoc = await db.collection("stocks").doc(game.id.toString()).get();
+            if (stockDoc.exists) {
+                const qty = stockDoc.data().currentStock;
+                stockText = `Stock: ${qty}`;
+                stockColor = qty > 0 ? "text-green-500" : "text-red-500";
+            } else {
+                stockText = "Available";
+                stockColor = "text-green-500";
+            }
+        } catch (error) {
+            stockText = "Ready";
+        }
+
+        let action;
+        if (game.isVariant) {
+            action = `openVariantModal(${game.id})`;
+        } else {
+            if (game.type === "Digital") {
+                action = `window.open('https://wa.me/60167481645?text=Nak%20beli%20${game.name}')`;
+            } else {
+                action = `openOrderModal('${game.name}')`;
+            }
+        }
+
+        // Lukis kad produk dengan tambahan baris stockColor
+        list.innerHTML += `
+            <div class="game-card rounded-3xl p-4 text-center relative group">
+                <img src="${game.img}" class="w-full h-24 object-contain mb-2">
+                <h3 class="text-[10px] font-black text-gray-200 uppercase">${game.name}</h3>
+                <p class="text-[9px] ${stockColor} font-bold mt-1 uppercase">${stockText}</p>
+                <button onclick="${action}" class="w-full bg-red-600 py-2.5 rounded-xl text-[9px] font-black text-white uppercase tracking-widest mt-3">
+                    ${game.isVariant ? 'See Variants' : 'Buy Now'}
+                </button>
+            </div>`;
+    }
+}
+
+// --- 2. Paparan Dalam Modal Varian ---
+function openVariantModal(id) {
+    const product = window.allProducts.find(p => p.id === id);
+    document.getElementById('variantTitle').innerText = product.name;
+    
+    document.getElementById('variantList').innerHTML = product.variants.map(v => {
+        const pDisplay = v.isRate ? (v.price * RATE_PER_ROBUX).toFixed(2) : v.price.toFixed(2);
+        
+        let clickAction;
+        // Tapis di sini: Jika type produk asal adalah Digital, jangan buka form
+        if (product.type === "Digital") {
+            clickAction = `window.open('https://wa.me/60167481645?text=Nak%20beli%20${v.name}%20Harga:%20RM${pDisplay}')`;
+        } else {
+            clickAction = `openOrderModal('${v.name}', ${v.price}, ${v.isRate})`;
+        }
+
+        return `
+            <button onclick="${clickAction}" class="w-full flex justify-between items-center bg-white/5 border border-white/5 p-4 rounded-2xl text-white hover:border-red-500 transition-all">
+                <span class="text-xs font-bold">${v.name}</span>
+                <span class="text-red-500 font-black italic text-sm">RM ${pDisplay}</span>
+            </button>`;
+    }).join('');
+    
+    document.getElementById('variantModal').classList.remove('hidden');
+}
+
+
+        function openOrderModal(itemName, amount = 0, isRate = false) {
+            closeVariantModal();
+            const initialPrice = isRate ? (amount * RATE_PER_ROBUX).toFixed(2) : amount.toFixed(2);
+            document.getElementById('orderModal').innerHTML = `
+                <div class="bg-[#0f1021] w-full max-w-sm rounded-3xl p-6 border border-white/10 shadow-2xl overflow-y-auto max-h-[90vh]">
+                    <div class="mb-6 bg-white p-3 rounded-2xl"><img src="qr-pay.jpg.jpg" class="w-32 h-32 mx-auto"></div>
+                    <div class="space-y-4 text-left">
+                        <div><label class="text-[10px] text-gray-500 font-black uppercase">Username</label>
+                        <input type="text" id="orderUser" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white outline-none focus:border-red-500" placeholder="PakAtan789"></div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div><label class="text-[10px] text-gray-500 font-black uppercase">Robux</label>
+                            <input type="number" id="orderRobux" value="${amount}" oninput="updatePrice(this.value)" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white outline-none focus:border-red-500"></div>
+                            <div><label class="text-[10px] text-gray-500 font-black uppercase">Price RM</label>
+                            <input type="text" id="orderPrice" value="${initialPrice}" readonly class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-gray-400 font-bold"></div>
+                        </div>
+                        <div><label class="text-[10px] text-gray-500 font-black uppercase">Item Name</label>
+                        <input type="text" id="orderItem" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white outline-none focus:border-red-500" placeholder="Skin Rod, VIP PASS"></div>
+                        <div><label class="text-[10px] text-gray-500 font-black uppercase">Map Name</label>
+                        <input type="text" id="orderMap" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white outline-none focus:border-red-500" placeholder="Fish It, Blox Fruit"></div>
+                        <button onclick="sendWhatsApp('${itemName}')" class="w-full bg-green-600 py-4 rounded-2xl font-black text-white uppercase tracking-widest mt-2">Hantar Order</button>
+                        <button onclick="closeOrderModal()" class="w-full text-gray-500 text-[10px] font-bold uppercase mt-2">Batal</button>
+                    </div>
+                </div>`;
+            document.getElementById('orderModal').classList.remove('hidden');
+        }
+
+        function updatePrice(val) { document.getElementById('orderPrice').value = (val * RATE_PER_ROBUX).toFixed(2); }
+        function sendWhatsApp(itemName) {
         const user = document.getElementById('orderUser').value;
         const robux = document.getElementById('orderRobux').value;
         const price = document.getElementById('orderPrice').value;
+        const item = document.getElementById('orderItem').value;
         const map = document.getElementById('orderMap').value;
 
         if(!user || !map) {
-            alert("Sila masukkan Username dan Nama Map!");
+            alert("Sila masukkan Username , Nama Item dan Nama Map!");
             return;
         }
 
         const msg = `Halo KZMartMY!%0A%0A` +
                     `*ORDER GIFT IN-GAME*%0A` +
-                    `Item: ${itemName}%0A` +
+                    `Jenis: ${itemName}%0A` +
                     `Username: ${user}%0A` +
                     `Jumlah Robux: ${robux}%0A` +
                     `Harga: RM${price}%0A` +
+                    `Nama Item: ${item}%0A` +
                     `Map: ${map}`;
         
         window.open(`https://wa.me/60167481645?text=${msg}`);
     }
+        function closeOrderModal() { document.getElementById('orderModal').classList.add('hidden'); }
+        function closeVariantModal() { document.getElementById('variantModal').classList.add('hidden'); }
 
-    function closeOrderModal() { document.getElementById('orderModal').classList.add('hidden'); }
-    function closeVariantModal() { document.getElementById('variantModal').classList.add('hidden'); }
+        let selectedRating = 0;
 
-    window.onload = () => { setTimeout(() => displayGames('ALL'), 500); };
-</script>
-<div id="variantModal" class="fixed inset-0 bg-black/90 z-[150] hidden flex items-center justify-center p-4">
-    <div class="bg-[#1a1b3a] w-full max-w-sm rounded-2xl p-6 border border-gray-700 shadow-2xl">
-        <h2 id="variantTitle" class="text-xl font-bold text-white mb-4 italic text-red-500 uppercase">Pilih Varian</h2>
-        <div id="variantList" class="space-y-3"></div>
-        <button onclick="closeVariantModal()" class="w-full mt-6 py-2 text-gray-500 text-xs uppercase font-bold tracking-widest">Tutup</button>
+// Fungsi untuk pilih bintang
+function setRating(n) {
+    selectedRating = n;
+    const stars = document.querySelectorAll('#starSelection i');
+    stars.forEach((star, index) => {
+        if (index < n) {
+            star.classList.add('active', 'text-yellow-500');
+            star.classList.remove('text-gray-600');
+        } else {
+            star.classList.remove('active', 'text-yellow-500');
+            star.classList.add('text-gray-600');
+        }
+    });
+}
+
+// Fungsi hantar ke Firebase
+function submitFeedback() {
+    const name = document.getElementById('feedbackName').value;
+    const text = document.getElementById('feedbackText').value;
+
+    // Pastikan selectedRating sudah dipilih (bintang diklik)
+    if (selectedRating === 0 || !name || !text) {
+        alert("Sila pilih bintang, isi nama dan komen anda!");
+        return;
+    }
+
+    const db = firebase.firestore();
+    
+    // Simpan data ke koleksi bernama "feedbacks"
+    db.collection("feedbacks").add({
+        name: name,
+        rating: selectedRating,
+        comment: text,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    })
+    .then(() => {
+        alert("Feedback berjaya dihantar! Terima kasih.");
+        // Reset borang
+        document.getElementById('feedbackName').value = "";
+        document.getElementById('feedbackText').value = "";
+        setRating(0); // Fungsi untuk reset bintang jadi kelabu semula
+    })
+    .catch((error) => {
+        console.error("Error hantar feedback: ", error);
+        alert("Gagal hantar feedback. Semak console untuk error.");
+    });
+}
+
+// Fungsi untuk tarik data secara LIVE
+function loadFeedbacks() {
+    const db = firebase.firestore();
+    db.collection("feedbacks").orderBy("timestamp", "desc").limit(5).onSnapshot((snapshot) => {
+        const list = document.getElementById('liveFeedbackList');
+        list.innerHTML = "";
+        
+        snapshot.forEach((doc) => {
+            const data = doc.data();
+            let starsHtml = "";
+            for(let i=0; i<5; i++) {
+                starsHtml += `<i class="fas fa-star ${i < data.rating ? 'text-yellow-500' : 'text-gray-700'}"></i>`;
+            }
+
+            list.innerHTML += `
+                <div class="feedback-card-live p-4 rounded-2xl">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-[10px] font-bold text-red-500 uppercase">${data.name}</span>
+                        <div class="text-[8px] space-x-0.5">${starsHtml}</div>
+                    </div>
+                    <p class="text-[11px] text-gray-400 italic">"${data.comment}"</p>
+                </div>
+            `;
+        });
+    });
+}
+
+// Panggil fungsi load masa page buka
+window.addEventListener('load', loadFeedbacks);
+
+// Fungsi untuk tutup memo
+function closeMemo() {
+    const memo = document.getElementById('memoModal');
+    memo.classList.add('hidden');
+    // (Opsional) Simpan dalam storage supaya tak muncul setiap kali refresh
+    localStorage.setItem('hasSeenMemo', 'true');
+}
+
+// Fungsi untuk munculkan memo secara automatik
+// SUIS POPUP: Tukar jadi true untuk ON, false untuk OFF
+const statusPopup = true; 
+
+// Gabungkan semua fungsi yang perlu dijalankan semasa page dibuka
+window.onload = function() {
+    // 1. Papar produk
+    displayGames('ALL');
+    
+    // 2. Jalankan penjejak Stok Firebase (TAMBAH INI)
+    syncRobuxStock(); 
+
+    // 3. Jalankan popup memo
+    const memo = document.getElementById('memoModal');
+    if (typeof statusPopup !== 'undefined' && statusPopup && memo) {
+        setTimeout(() => {
+            memo.classList.remove('hidden');
+        }, 1000);
+    }
+};
+
+
+function playClick() {
+    const sound = document.getElementById('clickSound');
+    if (sound) {
+        sound.currentTime = 0; // Reset ke permulaan supaya boleh klik laju-laju
+        sound.play();
+    }
+}
+
+// Kod ini akan "mendengar" setiap klik di seluruh website
+document.addEventListener('click', function (e) {
+    // Jika yang diklik adalah butang (BUTTON)
+    if (e.target.tagName === 'BUTTON' || e.target.closest('button')) {
+        playClick();
+    }
+}, false);
+
+// Fungsi untuk tarik stok secara Live
+function syncRobuxStock() {
+    const db = firebase.firestore();
+    
+    // Tarik data secara live dari Firestore
+    db.collection("web_settings").doc("robux_stock").onSnapshot((doc) => {
+        if (doc.exists) {
+            const data = doc.data();
+            const stockEl = document.getElementById('stock-display');
+            const statusEl = document.getElementById('status-display');
+
+            if (stockEl) {
+                // Tambah perkataan 'R$' di depan nombor
+                stockEl.innerText = ` ${Number(data.current_stock).toLocaleString()}`;
+            }
+
+            if (statusEl) {
+                statusEl.innerText = data.status.toUpperCase();
+                
+                // Tukar warna kotak ikut status
+                if (data.status.toUpperCase() === "READY TO GIFT") {
+                    statusEl.className = "text-[10px] font-black px-2 py-1 rounded-lg bg-green-500/10 text-green-500 inline-block border border-green-500/20";
+                } else {
+                    statusEl.className = "text-[10px] font-black px-2 py-1 rounded-lg bg-red-500/10 text-red-500 inline-block border border-red-500/20";
+                }
+            }
+        }
+    });
+}
+
+
+// Panggil fungsi ini dalam window.onload anda
+// window.onload = function() { ... syncRobuxStock(); ... }
+
+
+    </script>
+    <div class="mt-20 mb-10 px-6 text-center border-t border-white/5 pt-10">
+    <div class="flex flex-col items-center justify-center mb-6">
+        <div class="w-10 h-10 bg-red-600 rounded-xl flex items-center justify-center mb-3 shadow-lg shadow-red-600/20">
+            <span class="text-white font-black text-xl italic">K</span>
+        </div>
+        <h2 class="text-white font-bold text-sm tracking-tight">KZMartMY</h2>
+        <p class="text-[10px] text-gray-500 mt-1">Premium Roblox Items & Cheap Topup • Owned by KZMartMY</p>
+    </div>
+
+    <div class="mb-8">
+        <p class="text-[10px] text-gray-400 uppercase tracking-[0.2em] mb-3 font-bold">Community</p>
+        <a href="https://discord.gg/KZMartMY" class="inline-flex items-center px-8 py-2.5 bg-white text-black rounded-full text-[11px] font-black hover:bg-gray-200 transition-all">
+            Join Discord
+        </a>
+    </div>
+
+    <div class="w-full h-[1px] bg-white/5 mb-8"></div>
+
+    <div class="max-w-xs mx-auto space-y-4">
+        <p class="text-[9px] text-gray-500 leading-relaxed">
+            Not affiliated with Roblox Corporation. Roblox and the Roblox logo are trademarks of Roblox Corporation.
+        </p>
+        <p class="text-[9px] text-gray-500 leading-relaxed">
+            By completing a purchase, you confirm that you are at least 18 years old or are the parent or legal guardian completing this purchase on behalf of a minor.
+        </p>
+        
+        <a href="#" class="inline-flex items-center text-[9px] text-blue-400 font-bold hover:underline">
+            <i class="fas fa-info-circle mr-1"></i> Platform Compliance Notice
+        </a>
+
+        <p class="text-[9px] text-gray-600 font-medium pt-4">
+            © 2025 KZMartMY. All rights reserved.
+        </p>
     </div>
 </div>
 
-<div id="orderModal" class="fixed inset-0 bg-black/90 z-[200] hidden flex items-center justify-center p-4">
+
+<div id="memoModal" class="fixed inset-0 z-[999] hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+    <div class="bg-[#1a1b2e] border border-red-600/30 w-full max-w-sm rounded-3xl p-6 shadow-2xl transform transition-all scale-95 animate-in fade-in duration-300">
+        <div class="flex items-center space-x-3 mb-4">
+            <div class="w-10 h-10 bg-red-600 rounded-2xl flex items-center justify-center shadow-lg shadow-red-600/20">
+                <i class="fas fa-bullhorn text-white text-lg"></i>
+            </div>
+            <div>
+                <h2 class="text-white font-black italic uppercase tracking-wider">Store Update</h2>
+                <p class="text-[9px] text-gray-500 font-bold uppercase">Latest Announcement</p>
+            </div>
+        </div>
+
+        <div class="space-y-3 mb-6">
+            <p class="text-gray-300 text-xs leading-relaxed">
+                <span class="text-red-500 font-bold">INFO:</span> Website sedang diupdate. Untuk pembelian <span class="text-white font-bold italic">REDFINGER</span> sahaja boleh 🚀
+            </p>
+            <div class="bg-white/5 p-3 rounded-xl border border-white/5">
+                <p class="text-[10px] text-gray-400">
+                    <i class="fas fa-info-circle mr-1 text-red-500"></i>
+                    Stok Robux sedang ditambah secara berperingkat. Sila semak status stok di bawah.
+                </p>
+            </div>
+        </div>
+
+        <div class="flex flex-col space-y-2">
+            <button onclick="closeMemo()" class="w-full bg-red-600 py-3 rounded-xl text-[10px] font-black text-white uppercase tracking-widest hover:bg-red-500 transition-all">
+                Faham, Terima Kasih!
+            </button>
+        </div>
     </div>
+</div>
+
 </body>
 </html>
