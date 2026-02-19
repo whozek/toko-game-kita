@@ -287,9 +287,10 @@ async function displayGames(filter = 'ALL') {
     if (stockDoc.exists) {
         const qty = stockDoc.data().currentStock || 0;
         const prc = stockDoc.data().currentPrice || 0;
+        const rate = stockDoc.data().currentRate || 0;
         
         // Gabungkan maklumat Stok dan Harga dalam satu pembolehubah
-        stockText = `Stock: ${qty} | RM ${prc}`; 
+        stockText = `Stock: ${qty} | RM ${prc} | RATE ${rate}`; 
         stockColor = qty > 0 ? "text-green-500" : "text-red-500";
     } else {
         // Jika produk tiada dalam Firestore, check harga dari product.js
