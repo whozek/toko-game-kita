@@ -6,7 +6,7 @@ const allProducts = [
         img: "https://placehold.co/300x300/1a1b3a/white?text=Gun",
         category: "FISH IT", // Tambah ini
         isVariant: true, // Penanda baru
-        type: "Robux",
+        type: "Form",
         variants: [
             { name: "VIP + LUCK", isRate: true },
             { name: "MUTATIONS", isRate: true },
