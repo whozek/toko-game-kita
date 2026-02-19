@@ -584,14 +584,21 @@ function syncRobuxStock() {
     });
 }
 
-        // Fungsi utama untuk tentukan produk mana guna modal mana
-    function handleBuy(name) {
+      function handleBuy(name) {
+    // Cari data produk lengkap dari product.js
     const game = allProducts.find(p => p.name === name);
     
-    // Jika produk ada variant isRate (seperti Robux)
-    if (game && game.variants && game.variants.some(v => v.isRate)) {
+    if (!game) return; // Jika produk tak jumpa, jangan buat apa-apa
+
+    // LOGIK: Jika produk adalah kategori ROBUX atau mempunyai isRate: true
+    const isRobuxRate = game.type === "Robux" || 
+                        (game.variants && game.variants.some(v => v.isRate === true));
+
+    if (isRobuxRate) {
+        // Buka modal Robux (Modal LAMA - Tiada Kuantiti)
         openRobuxModal(game);
     } else {
+        // Buka modal Normal (Modal BARU - Ada Kuantiti)
         openNormalModal(name);
     }
 }
@@ -625,22 +632,33 @@ function closeNormalModal() { document.getElementById('normalModal').classList.a
 
 
     function openRobuxModal(game) {
-    document.getElementById('robux-game-name').innerText = game.name;
+    const modal = document.getElementById('robuxModal');
+    const nameEl = document.getElementById('robux-game-name');
     const container = document.getElementById('variant-container');
+
+    if (!modal || !nameEl || !container) return;
+
+    nameEl.innerText = game.name;
     container.innerHTML = "";
     
     // Reset input note
-    document.getElementById('robux-note').value = "";
+    if(document.getElementById('robux-note')) {
+        document.getElementById('robux-note').value = "";
+    }
 
-    game.variants.forEach(v => {
-        container.innerHTML += `
-            <button onclick="selectVariant('${v.name}')" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white text-xs font-bold hover:border-red-500 transition-all text-left flex justify-between">
-                <span>${v.name}</span>
-                <i class="fas fa-chevron-right text-red-500"></i>
-            </button>
-        `;
-    });
-    document.getElementById('robuxModal').classList.remove('hidden');
+    // Paparkan list variant (Rate)
+    if (game.variants) {
+        game.variants.forEach(v => {
+            container.innerHTML += `
+                <button onclick="selectVariant('${v.name}')" class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl text-white text-sm font-bold hover:border-red-500 transition-all text-left flex justify-between items-center mb-2">
+                    <span>${v.name}</span>
+                    <i class="fas fa-chevron-right text-red-500 text-xs"></i>
+                </button>
+            `;
+        });
+    }
+
+    modal.classList.remove('hidden');
 }
 
 
