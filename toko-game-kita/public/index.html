@@ -585,20 +585,17 @@ function syncRobuxStock() {
 }
 
       function handleBuy(name) {
-    // Cari data produk lengkap dari product.js
     const game = allProducts.find(p => p.name === name);
-    
-    if (!game) return; // Jika produk tak jumpa, jangan buat apa-apa
+    if (!game) return;
 
-    // LOGIK: Jika produk adalah kategori ROBUX atau mempunyai isRate: true
-    const isRobuxRate = game.type === "Robux" || 
-                        (game.variants && game.variants.some(v => v.isRate === true));
+    // SEMAK: Adakah produk ini isRate: true (di level utama atau di dalam variants)
+    const hasRate = game.isRate === true || (game.variants && game.variants.some(v => v.isRate === true));
 
-    if (isRobuxRate) {
-        // Buka modal Robux (Modal LAMA - Tiada Kuantiti)
+    if (hasRate) {
+        // Jika isRate: true, guna Modal Robux (Tiada Kuantiti)
         openRobuxModal(game);
     } else {
-        // Buka modal Normal (Modal BARU - Ada Kuantiti)
+        // Jika isRate: false atau tiada, guna Modal Normal (Ada Kuantiti)
         openNormalModal(name);
     }
 }
@@ -606,7 +603,7 @@ function syncRobuxStock() {
 // LOGIK UNTUK NORMAL PRODUCT (WITH QTY)
 function openNormalModal(name) {
     document.getElementById('normal-game-name').innerText = name;
-    document.getElementById('order-qty').value = 1;
+    document.getElementById('order-qty').value = 1; // Reset kuantiti ke 1
     document.getElementById('normal-note').value = "";
     document.getElementById('normalModal').classList.remove('hidden');
 }
@@ -632,22 +629,18 @@ function closeNormalModal() { document.getElementById('normalModal').classList.a
 
 
     function openRobuxModal(game) {
-    const modal = document.getElementById('robuxModal');
-    const nameEl = document.getElementById('robux-game-name');
+    // Set Nama Produk
+    document.getElementById('robux-game-name').innerText = game.name;
+    
     const container = document.getElementById('variant-container');
-
-    if (!modal || !nameEl || !container) return;
-
-    nameEl.innerText = game.name;
     container.innerHTML = "";
     
-    // Reset input note
-    if(document.getElementById('robux-note')) {
-        document.getElementById('robux-note').value = "";
-    }
+    // Reset Note
+    if(document.getElementById('robux-note')) document.getElementById('robux-note').value = "";
 
-    // Paparkan list variant (Rate)
-    if (game.variants) {
+    // Jika produk ada variants, paparkan. Jika tidak (seperti GIG ALL MAP yang isRate: true), 
+    // kita boleh teruskan ke input note.
+    if (game.variants && game.variants.length > 0) {
         game.variants.forEach(v => {
             container.innerHTML += `
                 <button onclick="selectVariant('${v.name}')" class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl text-white text-sm font-bold hover:border-red-500 transition-all text-left flex justify-between items-center mb-2">
@@ -656,9 +649,11 @@ function closeNormalModal() { document.getElementById('normalModal').classList.a
                 </button>
             `;
         });
+    } else {
+        container.innerHTML = `<p class="text-[10px] text-gray-500 italic">Sila masukkan detail order di bawah.</p>`;
     }
 
-    modal.classList.remove('hidden');
+    document.getElementById('robuxModal').classList.remove('hidden');
 }
 
 
