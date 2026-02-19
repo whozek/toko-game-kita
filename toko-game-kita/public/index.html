@@ -361,8 +361,8 @@ async function displayGames(filter = 'ALL') {
                     ${game.isVariant ? 'See Variants' : 'Buy Now'}
                 </button>
             </div>`;
-    }
-    filtered.forEach(product => {
+            
+            filtered.forEach(product => {
     const div = document.createElement('div');
     
     // 1. TAMBAH TRIGGER KLIK PADA KAD (DIV)
@@ -386,6 +386,7 @@ async function displayGames(filter = 'ALL') {
     `;
     container.appendChild(div);
 });
+    }
 }
 
 // --- 2. Paparan Dalam Modal Varian ---
