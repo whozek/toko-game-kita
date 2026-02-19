@@ -43,6 +43,7 @@ const allProducts = [
         isVariant: false,
         type: "Form",
         isRate: true,
+        allowQuantity: false,
         description: "🔥 GIG paling murah di pasaran. Proses 5-30 minit ikut queue"
     },
     {
