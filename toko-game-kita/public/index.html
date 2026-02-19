@@ -221,25 +221,6 @@ select#categorySelect option {
             appId: "1:1084515236820:web:582cb2a5cdb5181b5f9441"
         };
         firebase.initializeApp(firebaseConfig);
-
-        const visitRef = ref(db, 'stats/total_visits'); // Guna 'database' kalau variable anda nama database
-
-// 3. Tarik data secara real-time
-onValue(visitRef, (snapshot) => {
-    const data = snapshot.val();
-    const displayElement = document.getElementById('total-visits-count');
-    
-    if (displayElement) {
-        if (data !== null) {
-            displayElement.innerText = data.toLocaleString();
-        } else {
-            displayElement.innerText = "0";
-            console.log("Data 'total_visits' tidak dijumpai di Firebase.");
-        }
-    }
-}, (error) => {
-    console.error("Gagal tarik data Firebase:", error);
-});
         
         firebase.auth().onAuthStateChanged((user) => {
     if (user) {
@@ -579,11 +560,6 @@ function syncRobuxStock() {
 
     </script>
     
-     <div style="text-align: center; margin-top: 15px; padding-bottom: 20px; font-family: sans-serif;">
-    <p style="color: #888; font-size: 12px; margin: 0;">
-        Total Visits: <span id="total-visits-count" style="color: #fff; font-weight: bold;">0</span>
-    </p>
-</div> 
 
     <div class="mt-20 mb-10 px-6 text-center border-t border-white/5 pt-10">
     <div class="flex flex-col items-center justify-center mb-6">
