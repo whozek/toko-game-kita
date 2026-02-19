@@ -145,7 +145,6 @@ select#categorySelect option {
             <option value="ALL">📂 SEMUA KATEGORI</option>
             <option value="ROBUX">💰 ROBUX (ALL MAP)</option>
             <option value="REDFINGER">🚀 REDFINGER KEY</option>
-            <option value="FISH IT">🐬 FISH IT</option>
             </select>
         
         <div class="absolute inset-y-0 right-0 flex items-center px-5 pointer-events-none">
@@ -198,42 +197,8 @@ select#categorySelect option {
         </div>
     </div>
 
-
-       <div id="robuxModal" class="fixed inset-0 bg-black/95 z-[200] hidden flex items-center justify-center p-4 backdrop-blur-md">
-    <div class="bg-[#0f1021] w-full max-w-sm rounded-3xl p-6 border border-white/10 shadow-2xl">
-        <h2 id="robux-game-name" class="text-xl font-black text-red-500 mb-4 italic uppercase tracking-tighter"></h2>
-        <div id="variant-container" class="space-y-2 mb-4 max-h-60 overflow-y-auto"></div>
-        <input type="text" id="robux-note" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white mb-4 outline-none focus:border-red-500 text-sm" placeholder="Username / Link Profile...">
-        <button onclick="sendRobuxOrder()" class="w-full bg-red-600 py-4 rounded-2xl font-black text-white uppercase tracking-widest">Beli Sekarang</button>
-        <button onclick="closeRobuxModal()" class="w-full text-gray-500 text-[10px] font-bold uppercase mt-4 text-center">Batal</button>
-    </div>
-</div>
-
-<div id="normalModal" class="fixed inset-0 bg-black/95 z-[200] hidden flex items-center justify-center p-4 backdrop-blur-md">
-    <div class="bg-[#0f1021] w-full max-w-sm rounded-3xl p-6 border border-white/10 shadow-2xl">
-        <h2 id="normal-game-name" class="text-xl font-black text-green-500 mb-4 italic uppercase tracking-tighter"></h2>
-        
-        <div class="bg-white/5 p-4 rounded-2xl border border-white/10 mb-4">
-            <label class="text-[10px] text-gray-500 font-bold block mb-2 uppercase text-center tracking-widest">Pilih Kuantiti</label>
-            <div class="flex items-center justify-between bg-black/40 rounded-xl p-2 border border-white/5">
-                <button type="button" onclick="changeQty(-1)" class="w-10 h-10 bg-red-600/20 text-red-500 rounded-lg flex items-center justify-center text-xl font-bold">-</button>
-                <input type="number" id="order-qty" value="1" min="1" class="bg-transparent text-center text-white font-black text-2xl w-20 outline-none" readonly>
-                <button type="button" onclick="changeQty(1)" class="w-10 h-10 bg-red-600/20 text-red-500 rounded-lg flex items-center justify-center text-xl font-bold">+</button>
-            </div>
+    <div id="orderModal" class="fixed inset-0 bg-black/95 z-[200] hidden flex items-center justify-center p-4 backdrop-blur-md">
         </div>
-
-        <input type="text" id="normal-note" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white mb-4 outline-none focus:border-green-500 text-sm" placeholder="Nota / ID (Optional)...">
-        <button onclick="sendNormalOrder()" class="w-full bg-green-600 py-4 rounded-2xl font-black text-white uppercase tracking-widest">Hantar Order</button>
-        <button onclick="closeNormalModal()" class="w-full text-gray-500 text-[10px] font-bold uppercase mt-4 text-center">Batal</button>
-    </div>
-</div>
-
-        <input type="text" id="normal-note" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white mb-4 outline-none focus:border-green-500" placeholder="Nota Tambahan...">
-        <button onclick="sendNormalOrder()" class="w-full bg-green-600 py-4 rounded-2xl font-black text-white uppercase tracking-widest">Hantar Order</button>
-        <button onclick="closeNormalModal()" class="w-full text-gray-500 text-[10px] font-bold uppercase mt-4 text-center">Batal</button>
-    </div>
-</div>
-
         
         <audio id="clickSound" preload="auto">
     <source src="click-sound.mp3" type="audio/mpeg">
@@ -337,7 +302,7 @@ async function displayGames(filter = 'ALL') {
             if (game.type === "Digital") {
                 action = `window.open('https://wa.me/60167481645?text=Nak%20beli%20${game.name}')`;
             } else {
-                action = `openNormalModal('${game.name}')`;
+                action = `openOrderModal('${game.name}')`;
             }
         }
 
@@ -367,7 +332,7 @@ function openVariantModal(id) {
         if (product.type === "Digital") {
             clickAction = `window.open('https://wa.me/60167481645?text=Nak%20beli%20${v.name}%20Harga:%20RM${pDisplay}')`;
         } else {
-            clickAction = `openNormalModal('${v.name}', ${v.price}, ${v.isRate})`;
+            clickAction = `openOrderModal('${v.name}', ${v.price}, ${v.isRate})`;
         }
 
         return `
@@ -381,10 +346,10 @@ function openVariantModal(id) {
 }
 
 
-        function openRobuxModal(itemName, amount = 0, isRate = false) {
+        function openOrderModal(itemName, amount = 0, isRate = false) {
             closeVariantModal();
             const initialPrice = isRate ? (amount * RATE_PER_ROBUX).toFixed(2) : amount.toFixed(2);
-            document.getElementById('orderNormalModal').innerHTML = `
+            document.getElementById('orderModal').innerHTML = `
                 <div class="bg-[#0f1021] w-full max-w-sm rounded-3xl p-6 border border-white/10 shadow-2xl overflow-y-auto max-h-[90vh]">
                     <div class="mb-6 bg-white p-3 rounded-2xl"><img src="qr-pay.jpg.jpg" class="w-32 h-32 mx-auto"></div>
                     <div class="space-y-4 text-left">
@@ -401,10 +366,10 @@ function openVariantModal(id) {
                         <div><label class="text-[10px] text-gray-500 font-black uppercase">Map Name</label>
                         <input type="text" id="orderMap" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white outline-none focus:border-red-500" placeholder="Fish It, Blox Fruit"></div>
                         <button onclick="sendWhatsApp('${itemName}')" class="w-full bg-green-600 py-4 rounded-2xl font-black text-white uppercase tracking-widest mt-2">Hantar Order</button>
-                        <button onclick="closeNormalModal()" class="w-full text-gray-500 text-[10px] font-bold uppercase mt-2">Batal</button>
+                        <button onclick="closeOrderModal()" class="w-full text-gray-500 text-[10px] font-bold uppercase mt-2">Batal</button>
                     </div>
                 </div>`;
-            document.getElementById('RobuxModal').classList.remove('hidden');
+            document.getElementById('orderModal').classList.remove('hidden');
         }
 
         function updatePrice(val) { document.getElementById('orderPrice').value = (val * RATE_PER_ROBUX).toFixed(2); }
@@ -431,7 +396,7 @@ function openVariantModal(id) {
         
         window.open(`https://wa.me/60167481645?text=${msg}`);
     }
-        function closeRobuxModal() { document.getElementById('RobuxModal').classList.add('hidden'); }
+        function closeOrderModal() { document.getElementById('orderModal').classList.add('hidden'); }
         function closeVariantModal() { document.getElementById('variantModal').classList.add('hidden'); }
 
         let selectedRating = 0;
@@ -590,68 +555,9 @@ function syncRobuxStock() {
     });
 }
 
-      // FUNGSI UTAMA: Tapis produk ikut isRate
-function handleBuy(name) {
-    const game = allProducts.find(p => p.name === name);
-    if (!game) return;
 
-    // SEMAK: isRate di level utama (GIG ALL MAP) atau dalam variants (FISH IT)
-    const hasRate = game.isRate === true || (game.variants && game.variants.some(v => v.isRate === true));
-
-    if (hasRate) {
-        openRobuxModal(game);
-    } else {
-        openNormalModal(name);
-    }
-}
-
-// --- LOGIK MODAL RATE (ROBUX / GIG) ---
-function openRobuxModal(game) {
-    document.getElementById('robux-game-name').innerText = game.name;
-    const container = document.getElementById('variant-container');
-    container.innerHTML = "";
-    document.getElementById('robux-note').value = "";
-
-    if (game.variants && game.variants.length > 0) {
-        game.variants.forEach(v => {
-            container.innerHTML += `
-                <button onclick="selectVariant('${v.name}')" class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl text-white text-xs font-bold hover:border-red-500 transition-all text-left flex justify-between items-center mb-2">
-                    <span>${v.name}</span>
-                    <i class="fas fa-chevron-right text-red-500"></i>
-                </button>`;
-        });
-    } else {
-        container.innerHTML = `<p class="text-[10px] text-gray-500 italic text-center py-2 border border-dashed border-white/5 rounded-xl">Kira harga ikut Rate Semasa di atas.</p>`;
-    }
-    document.getElementById('robuxModal').classList.remove('hidden');
-}
-
-// --- LOGIK MODAL QUANTITY (DIGITAL / REDFINGER) ---
-function openNormalModal(name) {
-    document.getElementById('normal-game-name').innerText = name;
-    document.getElementById('order-qty').value = 1;
-    document.getElementById('normal-note').value = "";
-    document.getElementById('normalModal').classList.remove('hidden');
-}
-
-function changeQty(amt) {
-    const input = document.getElementById('order-qty');
-    let val = parseInt(input.value) + amt;
-    if (val < 1) val = 1;
-    input.value = val;
-}
-
-function sendNormalOrder() {
-    const name = document.getElementById('normal-game-name').innerText;
-    const qty = document.getElementById('order-qty').value;
-    const note = document.getElementById('normal-note').value;
-    const msg = `Halo KZMartMY! Saya nak order:%0A%0A📦 Produk: *${name}*%0A🔢 Kuantiti: *${qty}*%0A📝 Nota: ${note}`;
-    window.open(`https://wa.me/601121921356?text=${msg}`, '_blank');
-}
-
-// --- FUNGSI TUTUP ---
-function closeRobuxModal() { document.getElementById('robuxModal').classList.add('hidden'); }
-function closeNormalModal() { document.getElementById('normalModal').classList.add('hidden'); }
+// Panggil fungsi ini dalam window.onload anda
+// window.onload = function() { ... syncRobuxStock(); ... }
 
 
     </script>
