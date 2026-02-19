@@ -358,32 +358,65 @@ function openVariantModal(id) {
 
 
         function openOrderModal(itemName, amount = 0, isRate = false) {
-            closeVariantModal();
-            const initialPrice = isRate ? (amount * RATE_PER_ROBUX).toFixed(2) : amount.toFixed(2);
-            document.getElementById('orderModal').innerHTML = `
-                <div class="bg-[#0f1021] w-full max-w-sm rounded-3xl p-6 border border-white/10 shadow-2xl overflow-y-auto max-h-[90vh]">
-                    <div class="mb-6 bg-white p-3 rounded-2xl"><img src="qr-pay.jpg.jpg" class="w-32 h-32 mx-auto"></div>
-                    <div class="space-y-4 text-left">
-                        <div><label class="text-[10px] text-gray-500 font-black uppercase">Username</label>
-                        <input type="text" id="orderUser" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white outline-none focus:border-red-500" placeholder="PakAtan789"></div>
-                        <div class="grid grid-cols-2 gap-3">
-                            <div><label class="text-[10px] text-gray-500 font-black uppercase">Robux</label>
-                            <input type="number" id="orderRobux" value="${amount}" oninput="updatePrice(this.value)" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white outline-none focus:border-red-500"></div>
-                            <div><label class="text-[10px] text-gray-500 font-black uppercase">Price RM</label>
-                            <input type="text" id="orderPrice" value="${initialPrice}" readonly class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-gray-400 font-bold"></div>
-                        </div>
-                        <div><label class="text-[10px] text-gray-500 font-black uppercase">Item Name</label>
-                        <input type="text" id="orderItem" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white outline-none focus:border-red-500" placeholder="Skin Rod, VIP PASS"></div>
-                        <div><label class="text-[10px] text-gray-500 font-black uppercase">Map Name</label>
-                        <input type="text" id="orderMap" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white outline-none focus:border-red-500" placeholder="Fish It, Blox Fruit"></div>
-                        <button onclick="sendWhatsApp('${itemName}')" class="w-full bg-green-600 py-4 rounded-2xl font-black text-white uppercase tracking-widest mt-2">Hantar Order</button>
-                        <button onclick="closeOrderModal()" class="w-full text-gray-500 text-[10px] font-bold uppercase mt-2">Batal</button>
+    closeVariantModal();
+    
+    // Cari data produk asal untuk semak allowQuantity
+    const product = window.allProducts.find(p => p.name === itemName || p.variants?.some(v => v.name === itemName));
+    const canChangeQty = product && product.allowQuantity;
+    
+    const initialPrice = isRate ? (amount * RATE_PER_ROBUX).toFixed(2) : amount.toFixed(2);
+    
+    document.getElementById('orderModal').innerHTML = `
+        <div class="bg-[#0f1021] w-full max-w-sm rounded-3xl p-6 border border-white/10 shadow-2xl overflow-y-auto max-h-[90vh]">
+            <div class="mb-6 bg-white p-3 rounded-2xl"><img src="qr-pay.jpg.jpg" class="w-32 h-32 mx-auto"></div>
+            <div class="space-y-4 text-left">
+                <div>
+                    <label class="text-[10px] text-gray-500 font-black uppercase">Username</label>
+                    <input type="text" id="orderUser" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white outline-none focus:border-red-500" placeholder="PakAtan789">
+                </div>
+                
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-[10px] text-gray-500 font-black uppercase">${canChangeQty ? 'Quantity' : 'Robux/Amount'}</label>
+                        <input type="number" id="orderRobux" value="${canChangeQty ? 1 : amount}" 
+                            ${!canChangeQty && !isRate ? 'readonly' : ''} 
+                            oninput="updatePrice(this.value, ${amount}, ${isRate}, ${canChangeQty})" 
+                            class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white outline-none focus:border-red-500">
                     </div>
-                </div>`;
-            document.getElementById('orderModal').classList.remove('hidden');
-        }
+                    <div>
+                        <label class="text-[10px] text-gray-500 font-black uppercase">Price RM</label>
+                        <input type="text" id="orderPrice" value="${initialPrice}" readonly class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-gray-400 font-bold">
+                    </div>
+                </div>
 
-        function updatePrice(val) { document.getElementById('orderPrice').value = (val * RATE_PER_ROBUX).toFixed(2); }
+                <div>
+                    <label class="text-[10px] text-gray-500 font-black uppercase">Item Name</label>
+                    <input type="text" id="orderItem" value="${itemName}" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white outline-none focus:border-red-500">
+                </div>
+                
+                <div>
+                    <label class="text-[10px] text-gray-500 font-black uppercase">Map Name</label>
+                    <input type="text" id="orderMap" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white outline-none focus:border-red-500" placeholder="Fish It, Blox Fruit">
+                </div>
+
+                <button onclick="sendWhatsApp('${itemName}')" class="w-full bg-green-600 py-4 rounded-2xl font-black text-white uppercase tracking-widest mt-2">Hantar Order</button>
+                <button onclick="closeOrderModal()" class="w-full text-gray-500 text-[10px] font-bold uppercase mt-2">Batal</button>
+            </div>
+        </div>`;
+    document.getElementById('orderModal').classList.remove('hidden');
+}
+
+        function updatePrice(val, baseAmount, isRate, canChangeQty) {
+    let finalPrice = 0;
+    if (canChangeQty) {
+        // Harga = Kuantiti * Harga seunit
+        finalPrice = val * baseAmount;
+    } else {
+        // Harga = Robux * Rate
+        finalPrice = val * RATE_PER_ROBUX;
+    }
+    document.getElementById('orderPrice').value = finalPrice.toFixed(2);
+}
         function sendWhatsApp(itemName) {
         const user = document.getElementById('orderUser').value;
         const robux = document.getElementById('orderRobux').value;
