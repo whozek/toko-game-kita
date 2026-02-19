@@ -45,7 +45,7 @@ const allProducts = [
         isRate: true
     },
     {
-        id: f1,
+        id: 11,
         isVisible: true,
         name: "TUMBAL",
         category: "FISH IT",
@@ -56,7 +56,7 @@ const allProducts = [
         isRate: false
     },
     {
-        id: f2,
+        id: 12,
         isVisible: true,
         name: "ENCHANT EVO STONE",
         category: "FISH IT",
