@@ -330,18 +330,16 @@ async function displayGames(filter = 'ALL') {
             action = `openVariantModal(${game.id})`;
         } else {
             if (game.type === "Digital") {
-                action = `window.open('https://wa.me/60167481645?text=Nak%20beli%20${game.name}')`;
-            } else {
-                action = `openOrderModal('${game.name}')`;
-            }
-        }
-
-        // Cari line 335, pastikan button dia jadi macam ni:
+                action = // Cari line 335, pastikan button dia jadi macam ni:
 <button onclick="handleBuy('${product.name}')" 
     class="w-full bg-red-600 hover:bg-red-700 text-white font-black py-2.5 rounded-xl text-[10px] uppercase tracking-wider transition-all shadow-lg shadow-red-600/20 flex items-center justify-center space-x-2">
     <i class="fas fa-shopping-cart text-[10px]"></i>
     <span>Buy Now</span>
 </button>
+            } else {
+                action = `openOrderModal('${game.name}')`;
+            }
+        }
 
 
         // Lukis kad produk dengan tambahan baris stockColor
