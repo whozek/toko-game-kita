@@ -197,34 +197,7 @@ select#categorySelect option {
         </div>
     </div>
 
-    <div id="formModal" class="fixed inset-0 bg-black/95 z-[200] hidden flex items-center justify-center p-4 backdrop-blur-md">
-        <div class="bg-[#0f1021] w-full max-w-sm rounded-3xl p-6 border border-white/10 shadow-2xl">
-            <h2 id="form-game-name" class="text-xl font-black text-red-500 mb-4 italic uppercase tracking-tighter"></h2>
-            <div id="form-variant-container" class="space-y-2 mb-4"></div>
-            <input type="text" id="form-note" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white mb-4 outline-none focus:border-red-500 text-sm" placeholder="Username / Link Profile...">
-            <button onclick="sendFormOrder()" class="w-full bg-red-600 py-4 rounded-2xl font-black text-white uppercase tracking-widest">Beli Sekarang</button>
-            <button onclick="closeFormModal()" class="w-full text-gray-500 text-[10px] font-bold uppercase mt-4 text-center">Batal</button>
-        </div>
-    </div>
-
-    <div id="qtyModal" class="fixed inset-0 bg-black/95 z-[200] hidden flex items-center justify-center p-4 backdrop-blur-md">
-        <div class="bg-[#0f1021] w-full max-w-sm rounded-3xl p-6 border border-white/10 shadow-2xl">
-            <h2 id="qty-game-name" class="text-xl font-black text-green-500 mb-4 italic uppercase tracking-tighter"></h2>
-            <div class="bg-white/5 p-4 rounded-2xl border border-white/10 mb-4">
-                <label class="text-[10px] text-gray-500 font-bold block mb-2 uppercase text-center">Set Kuantiti</label>
-                <div class="flex items-center justify-between bg-black/40 rounded-xl p-2 border border-white/5">
-                    <button type="button" onclick="changeQty(-1)" class="w-10 h-10 bg-red-600/20 text-red-500 rounded-lg flex items-center justify-center text-xl font-bold">-</button>
-                    <input type="number" id="order-qty" value="1" min="1" class="bg-transparent text-center text-white font-black text-2xl w-20 outline-none" readonly>
-                    <button type="button" onclick="changeQty(1)" class="w-10 h-10 bg-red-600/20 text-red-500 rounded-lg flex items-center justify-center text-xl font-bold">+</button>
-                </div>
-            </div>
-            <input type="text" id="qty-note" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white mb-4 outline-none focus:border-green-500 text-sm" placeholder="Nota / ID (Optional)...">
-            <button onclick="sendQtyOrder()" class="w-full bg-green-600 py-4 rounded-2xl font-black text-white uppercase tracking-widest text-sm">Hantar Order</button>
-            <button onclick="closeQtyModal()" class="w-full text-gray-500 text-[10px] font-bold uppercase mt-4 text-center">Batal</button>
-        </div>
-    </div>
-
-             <div id="orderModal" class="fixed inset-0 bg-black/95 z-[200] hidden flex items-center justify-center p-4 backdrop-blur-md">
+    <div id="orderModal" class="fixed inset-0 bg-black/95 z-[200] hidden flex items-center justify-center p-4 backdrop-blur-md">
         </div>
         
         <audio id="clickSound" preload="auto">
@@ -327,12 +300,11 @@ async function displayGames(filter = 'ALL') {
             action = `openVariantModal(${game.id})`;
         } else {
             if (game.type === "Digital") {
-                action = `openQtyModal('${game.name}')`;
+                action = `window.open('https://wa.me/60167481645?text=Nak%20beli%20${game.name}')`;
             } else {
-                action = `openFormModal('${game.name}')`;
+                action = `openOrderModal('${game.name}')`;
             }
         }
-
 
         // Lukis kad produk dengan tambahan baris stockColor
         list.innerHTML += `
@@ -358,9 +330,9 @@ function openVariantModal(id) {
         let clickAction;
         // Tapis di sini: Jika type produk asal adalah Digital, jangan buka form
         if (product.type === "Digital") {
-            clickAction = `openQtyModal('${v.name}%20Harga:%20RM${pDisplay}')`;
+            clickAction = `window.open('https://wa.me/60167481645?text=Nak%20beli%20${v.name}%20Harga:%20RM${pDisplay}')`;
         } else {
-            clickAction = `openFormModal('${v.name}', ${v.price}, ${v.isRate})`;
+            clickAction = `openOrderModal('${v.name}', ${v.price}, ${v.isRate})`;
         }
 
         return `
@@ -384,13 +356,13 @@ function openVariantModal(id) {
                         <div><label class="text-[10px] text-gray-500 font-black uppercase">Username</label>
                         <input type="text" id="orderUser" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white outline-none focus:border-red-500" placeholder="PakAtan789"></div>
                         <div class="grid grid-cols-2 gap-3">
-                            <div><label class="text-[10px] text-gray-500 font-black uppercase">Jumlah Robux</label>
+                            <div><label class="text-[10px] text-gray-500 font-black uppercase">Robux</label>
                             <input type="number" id="orderRobux" value="${amount}" oninput="updatePrice(this.value)" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white outline-none focus:border-red-500"></div>
                             <div><label class="text-[10px] text-gray-500 font-black uppercase">Price RM</label>
                             <input type="text" id="orderPrice" value="${initialPrice}" readonly class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-gray-400 font-bold"></div>
                         </div>
                         <div><label class="text-[10px] text-gray-500 font-black uppercase">Item Name</label>
-                        <input type="text" id="orderItem" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white outline-none focus:border-red-500" placeholder="Skin Rod, VIP Pass"></div>
+                        <input type="text" id="orderItem" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white outline-none focus:border-red-500" placeholder="Skin Rod, VIP PASS"></div>
                         <div><label class="text-[10px] text-gray-500 font-black uppercase">Map Name</label>
                         <input type="text" id="orderMap" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white outline-none focus:border-red-500" placeholder="Fish It, Blox Fruit"></div>
                         <button onclick="sendWhatsApp('${itemName}')" class="w-full bg-green-600 py-4 rounded-2xl font-black text-white uppercase tracking-widest mt-2">Hantar Order</button>
@@ -584,77 +556,8 @@ function syncRobuxStock() {
 }
 
 
-        // FUNGSI UTAMA: Tapis produk ikut TYPE (Form atau Bukan)
-function handleBuy(name) {
-    const game = allProducts.find(p => p.name === name);
-    if (!game) return;
-
-    if (game.type === "Form") {
-        // Buka modal lama untuk GIG ALL MAP
-        openFormModal(game);
-    } else {
-        // Buka modal kuantiti untuk DIGITAL/REDFINGER
-        openQtyModal(name);
-    }
-}
-
-// --- FUNGSI MODAL FORM (IKUT KOD ASAL ANDA) ---
-    // --- LOGIK UNTUK TYPE FORM (KOD ASAL ANDA) ---
-function openOrderModal(game) {
-    document.getElementById('form-game-name').innerText = game.name;
-    const container = document.getElementById('form-variant-container');
-    container.innerHTML = "";
-    document.getElementById('form-note').value = "";
-    if (game.variants && game.variants.length > 0) {
-        game.variants.forEach(v => {
-            container.innerHTML += `<button onclick="selectVariant('${v.name}')" class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl text-white text-xs font-bold mb-2 text-left flex justify-between uppercase italic"><span>${v.name}</span> <i class="fas fa-chevron-right text-red-500"></i></button>`;
-        });
-    }
-    document.getElementById('formModal').classList.remove('hidden');
-}
-
-function sendOrderOrder() {
-    const name = document.getElementById('form-game-name').innerText;
-    const note = document.getElementById('form-note').value;
-    
-    const msg = msg = `Halo KZMartMY!%0A%0A` +
-                    `*ORDER GIFT IN-GAME*%0A` +
-                    `Jenis: ${itemName}%0A` +
-                    `Username: ${user}%0A` +
-                    `Jumlah Robux: ${robux}%0A` +
-                    `Harga: RM${price}%0A` +
-                    `Nama Item: ${item}%0A` +
-                    `Map: ${map}`;
-
-    window.open(`https://wa.me/60167481645?text=${msg}`, '_blank');
-}
-
-// --- LOGIK UNTUK TYPE DIGITAL (QUANTITY) ---
-function openQtyModal(name) {
-    document.getElementById('qty-game-name').innerText = name;
-    document.getElementById('order-qty').value = 1;
-    document.getElementById('qty-note').value = "";
-    document.getElementById('qtyModal').classList.remove('hidden');
-}
-
-function changeQty(amt) {
-    const input = document.getElementById('order-qty');
-    let val = parseInt(input.value) + amt;
-    if (val < 1) val = 1;
-    input.value = val;
-}
-
-function sendQtyOrder() {
-    const name = document.getElementById('qty-game-name').innerText;
-    const qty = document.getElementById('order-qty').value;
-    const note = document.getElementById('qty-note').value;
-    const msg = `Halo! Saya nak order:%0A📦 Produk: *${name}*%0A🔢 Kuantiti: *${qty}*%0A📝 Nota: ${note}`;
-    window.open(`https://wa.me/60167481645?text=${msg}`, '_blank');
-}
-
-// Fungsi Tutup
-function closeOrderModal() { document.getElementById('orderModal').classList.add('hidden'); }
-function closeQtyModal() { document.getElementById('qtyModal').classList.add('hidden'); }
+// Panggil fungsi ini dalam window.onload anda
+// window.onload = function() { ... syncRobuxStock(); ... }
 
 
     </script>
