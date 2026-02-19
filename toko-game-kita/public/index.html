@@ -283,19 +283,27 @@ async function displayGames(filter = 'ALL') {
 
         // Ambil data stok dari Firestore
         try {
-            const stockDoc = await db.collection("stocks").doc(game.id.toString()).get();
-            if (stockDoc.exists) {
-                const qty = stockDoc.data().currentStock;
-                stockText = `Stock: ${qty}`;
-                stockColor = qty > 0 ? "text-green-500" : "text-red-500";
-
-            } else {
-                stockText = "Available";
-                stockColor = "text-green-500";
-            }
-        } catch (error) {
-            stockText = "Ready";
+    const stockDoc = await db.collection("stocks").doc(game.id.toString()).get();
+    if (stockDoc.exists) {
+        const qty = stockDoc.data().currentStock || 0;
+        const prc = stockDoc.data().currentPrice || 0;
+        
+        // Gabungkan maklumat Stok dan Harga dalam satu pembolehubah
+        stockText = `Stock: ${qty} | RM ${prc}`; 
+        stockColor = qty > 0 ? "text-green-500" : "text-red-500";
+    } else {
+        // Jika produk tiada dalam Firestore, check harga dari product.js
+        if(game.price) {
+            stockText = `Price: RM ${game.price.toFixed(2)}`;
+        } else {
+            stockText = "Available";
         }
+        stockColor = "text-green-500";
+    }
+} catch (error) {
+    stockText = "Ready";
+    stockColor = "text-green-500";
+}
 
         let action;
         if (game.isVariant) {
