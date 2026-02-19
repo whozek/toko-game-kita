@@ -381,7 +381,7 @@ function openVariantModal(id) {
 }
 
 
-        function openNormalModal(itemName, amount = 0, isRate = false) {
+        function openRobuxModal(itemName, amount = 0, isRate = false) {
             closeVariantModal();
             const initialPrice = isRate ? (amount * RATE_PER_ROBUX).toFixed(2) : amount.toFixed(2);
             document.getElementById('orderNormalModal').innerHTML = `
@@ -404,7 +404,7 @@ function openVariantModal(id) {
                         <button onclick="closeNormalModal()" class="w-full text-gray-500 text-[10px] font-bold uppercase mt-2">Batal</button>
                     </div>
                 </div>`;
-            document.getElementById('normalModal').classList.remove('hidden');
+            document.getElementById('RobuxModal').classList.remove('hidden');
         }
 
         function updatePrice(val) { document.getElementById('orderPrice').value = (val * RATE_PER_ROBUX).toFixed(2); }
