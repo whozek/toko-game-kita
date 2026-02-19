@@ -199,6 +199,27 @@ select#categorySelect option {
 
     <div id="orderModal" class="fixed inset-0 bg-black/95 z-[200] hidden flex items-center justify-center p-4 backdrop-blur-md">
         </div>
+
+        <div id="detailModal" class="fixed inset-0 bg-black/95 z-[250] hidden flex items-center justify-center p-4 backdrop-blur-md">
+    <div class="bg-[#0f1021] w-full max-w-sm rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
+        <img id="detail-img" src="" class="w-full h-48 object-cover">
+        
+        <div class="p-6">
+            <h2 id="detail-name" class="text-2xl font-black text-white italic uppercase tracking-tighter mb-1"></h2>
+            <p id="detail-category" class="text-[10px] text-red-500 font-bold uppercase tracking-widest mb-4"></p>
+            
+            <div class="bg-white/5 p-4 rounded-2xl border border-white/5 mb-6">
+                <label class="text-[10px] text-gray-500 font-bold block mb-1 uppercase">Description</label>
+                <p id="detail-desc" class="text-xs text-gray-300 leading-relaxed italic"></p>
+            </div>
+
+            <div class="flex space-x-3">
+                <button onclick="closeDetail()" class="flex-1 bg-white/5 py-4 rounded-2xl font-bold text-gray-400 uppercase text-xs">Close</button>
+                <button id="detail-buy-btn" class="flex-[2] bg-red-600 py-4 rounded-2xl font-black text-white uppercase tracking-widest shadow-lg shadow-red-600/20">Buy Now</button>
+            </div>
+        </div>
+    </div>
+</div>
         
         <audio id="clickSound" preload="auto">
     <source src="click-sound.mp3" type="audio/mpeg">
@@ -251,6 +272,29 @@ function filterGames(category) {
     displayGames(category);
 }
 
+// Fungsi bila user klik KOTAK PRODUK
+function showProductDetail(name) {
+    const product = allProducts.find(p => p.name === name);
+    if (!product) return;
+
+    document.getElementById('detail-img').src = product.img;
+    document.getElementById('detail-name').innerText = product.name;
+    document.getElementById('detail-category').innerText = product.category;
+    document.getElementById('detail-desc').innerText = product.description || "No description available for this item.";
+    
+    // Set butang Buy Now dalam modal detail supaya panggil handleBuy asal kita
+    document.getElementById('detail-buy-btn').onclick = function() {
+        closeDetail();
+        handleBuy(product.name);
+    };
+
+    document.getElementById('detailModal').classList.remove('hidden');
+}
+
+function closeDetail() {
+    document.getElementById('detailModal').classList.add('hidden');
+}
+
 
         firebase.auth().onAuthStateChanged((user) => {
             if (!user) { window.location.href = 'login.html'; }
@@ -275,6 +319,12 @@ async function displayGames(filter = 'ALL') {
     const filtered = filter === 'ALL' ? data : data.filter(p => p.category === filter);
 
     list.innerHTML = ""; // Kosongkan list dulu sebelum lukis baru
+
+    // Contoh dalam loop displayGames
+const card = `
+    <div onclick="showProductDetail('${product.name}')" class="cursor-pointer ...">
+        </div>
+`;
 
     for (const game of filtered) {
         let stockText = "Checking...";

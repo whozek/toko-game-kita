@@ -42,7 +42,8 @@ const allProducts = [
         img: "https://cdn.discordapp.com/attachments/1154147488341704745/1473521420158898227/IMG_2575.jpg?ex=69968343&is=699531c3&hm=8fe86f695255badf40127d442c16da411fa0fbc2eec74698fedb548ba2420d99&",
         isVariant: false,
         type: "Form",
-        isRate: true
+        isRate: true,
+        description: "🔥 GIG paling murah di pasaran. Proses 5-30 minit ikut queue"
     },
     {
         id: 11,
