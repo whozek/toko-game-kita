@@ -417,28 +417,34 @@ function openVariantModal(id) {
     document.getElementById('orderPrice').value = finalPrice.toFixed(2);
 }
         function sendWhatsApp(itemName) {
-        const user = document.getElementById('orderUser').value;
-        const robux = document.getElementById('orderRobux').value;
-        const price = document.getElementById('orderPrice').value;
-        const item = document.getElementById('orderItem').value;
-        const map = document.getElementById('orderMap').value;
+    const user = document.getElementById('orderUser').value;
+    const qtyOrRobux = document.getElementById('orderRobux').value;
+    const price = document.getElementById('orderPrice').value;
+    const item = document.getElementById('orderItem').value;
+    const map = document.getElementById('orderMap').value;
 
-        if(!user || !map) {
-            alert("Sila masukkan Username , Nama Item dan Nama Map!");
-            return;
-        }
+    // Cari data produk untuk menentukan label (Kuantiti atau Robux)
+    const product = window.allProducts.find(p => p.name === itemName || p.variants?.some(v => v.name === itemName));
+    const labelType = (product && product.allowQuantity) ? "Kuantiti" : "Jumlah Robux";
 
-        const msg = `Halo KZMartMY!%0A%0A` +
-                    `*ORDER GIFT IN-GAME*%0A` +
-                    `Jenis: ${itemName}%0A` +
-                    `Username: ${user}%0A` +
-                    `Jumlah Robux: ${robux}%0A` +
-                    `Harga: RM${price}%0A` +
-                    `Nama Item: ${item}%0A` +
-                    `Map: ${map}`;
-        
-        window.open(`https://wa.me/60167481645?text=${msg}`);
+    if(!user || !map) {
+        alert("Sila masukkan Username dan Nama Map!");
+        return;
     }
+
+    const msg = `Halo KZMartMY!%0A%0A` +
+                `*ORDER BARU DITERIMA*%0A` +
+                `--------------------------%0A` +
+                `Produk: ${itemName}%0A` +
+                `Username: ${user}%0A` +
+                `${labelType}: ${qtyOrRobux}%0A` +
+                `Total Harga: RM${price}%0A` +
+                `Item Detail: ${item}%0A` +
+                `Map: ${map}%0A` +
+                `--------------------------`;
+    
+    window.open(`https://wa.me/60167481645?text=${msg}`);
+}
         function closeOrderModal() { document.getElementById('orderModal').classList.add('hidden'); }
         function closeVariantModal() { document.getElementById('variantModal').classList.add('hidden'); }
 
