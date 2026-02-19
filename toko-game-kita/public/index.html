@@ -198,7 +198,27 @@ select#categorySelect option {
     </div>
 
     <div id="orderModal" class="fixed inset-0 bg-black/95 z-[200] hidden flex items-center justify-center p-4 backdrop-blur-md">
+    <div class="bg-[#0f1021] w-full max-w-sm rounded-3xl p-6 border border-white/10 shadow-2xl overflow-y-auto max-h-[90vh]">
+        <h2 id="modal-game-name" class="text-xl font-black text-red-500 mb-4 italic uppercase tracking-tighter"></h2>
+        
+        <div id="modal-variant-container" class="space-y-2 mb-4"></div>
+
+        <div id="qty-section" class="bg-white/5 p-4 rounded-2xl border border-white/10 mb-4 hidden">
+            <label class="text-[10px] text-gray-500 font-bold block mb-2 uppercase text-center tracking-widest">Pilih Kuantiti</label>
+            <div class="flex items-center justify-between bg-black/40 rounded-xl p-2 border border-white/5">
+                <button onclick="changeQty(-1)" class="w-10 h-10 bg-red-600/20 text-red-500 rounded-lg flex items-center justify-center text-xl font-bold">-</button>
+                <input type="number" id="order-qty" value="1" min="1" class="bg-transparent text-center text-white font-black text-2xl w-20 outline-none" readonly>
+                <button onclick="changeQty(1)" class="w-10 h-10 bg-red-600/20 text-red-500 rounded-lg flex items-center justify-center text-xl font-bold">+</button>
+            </div>
         </div>
+
+        <input type="text" id="order-note" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white mb-4 outline-none focus:border-red-500 text-sm" placeholder="Username / ID / Nota...">
+        
+        <button onclick="sendFinalOrder()" class="w-full bg-red-600 py-4 rounded-2xl font-black text-white uppercase tracking-widest shadow-lg shadow-red-600/20">Beli Sekarang</button>
+        <button onclick="closeModal()" class="w-full text-gray-500 text-[10px] font-bold uppercase mt-4 text-center tracking-widest">Batal</button>
+    </div>
+</div>
+
         
         <audio id="clickSound" preload="auto">
     <source src="click-sound.mp3" type="audio/mpeg">
@@ -346,39 +366,94 @@ function openVariantModal(id) {
 }
 
 
-        function openOrderModal(itemName, amount = 0, isRate = false) {
-            closeVariantModal();
-            const initialPrice = isRate ? (amount * RATE_PER_ROBUX).toFixed(2) : amount.toFixed(2);
-            document.getElementById('orderModal').innerHTML = `
-                <div class="bg-[#0f1021] w-full max-w-sm rounded-3xl p-6 border border-white/10 shadow-2xl overflow-y-auto max-h-[90vh]">
-                    <div class="mb-6 bg-white p-3 rounded-2xl"><img src="qr-pay.jpg.jpg" class="w-32 h-32 mx-auto"></div>
-                    <div class="space-y-4 text-left">
-                        <div><label class="text-[10px] text-gray-500 font-black uppercase">Username</label>
-                        <input type="text" id="orderUser" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white outline-none focus:border-red-500" placeholder="PakAtan789"></div>
-                        <div class="grid grid-cols-2 gap-3">
-                            <div><label class="text-[10px] text-gray-500 font-black uppercase">Robux</label>
-                            <input type="number" id="orderRobux" value="${amount}" oninput="updatePrice(this.value)" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white outline-none focus:border-red-500"></div>
-                            <div><label class="text-[10px] text-gray-500 font-black uppercase">Price RM</label>
-                            <input type="text" id="orderPrice" value="${initialPrice}" readonly class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-gray-400 font-bold"></div>
-                        </div>
-                        <div><label class="text-[10px] text-gray-500 font-black uppercase">Item Name</label>
-                        <input type="text" id="orderItem" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white outline-none focus:border-red-500" placeholder="Skin Rod, VIP PASS"></div>
-                        <div><label class="text-[10px] text-gray-500 font-black uppercase">Map Name</label>
-                        <input type="text" id="orderMap" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white outline-none focus:border-red-500" placeholder="Fish It, Blox Fruit"></div>
-                        <button onclick="sendWhatsApp('${itemName}')" class="w-full bg-green-600 py-4 rounded-2xl font-black text-white uppercase tracking-widest mt-2">Hantar Order</button>
-                        <button onclick="closeOrderModal()" class="w-full text-gray-500 text-[10px] font-bold uppercase mt-2">Batal</button>
+        function openOrderModal(itemName) {
+    // Cari data produk dalam list
+    const product = allProducts.find(p => p.name === itemName);
+    if (!product) return;
+
+    // Sediakan design modal
+    document.getElementById('orderModal').innerHTML = `
+        <div class="bg-[#0f1021] w-full max-w-sm rounded-3xl p-6 border border-white/10 shadow-2xl overflow-y-auto max-h-[90vh]">
+            <div class="mb-6 bg-white p-3 rounded-2xl">
+                <img src="qr-pay.jpg.jpg" class="w-32 h-32 mx-auto">
+            </div>
+            
+            <div class="space-y-4 text-left">
+                <h2 class="text-white font-black italic uppercase text-center border-b border-white/5 pb-2">${product.name}</h2>
+                
+                <div>
+                    <label class="text-[10px] text-gray-500 font-black uppercase tracking-widest">Username / ID</label>
+                    <input type="text" id="orderUser" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white outline-none focus:border-red-500" placeholder="PakAtan789">
+                </div>
+
+                ${product.type !== "Form" ? `
+                <div class="bg-white/5 p-4 rounded-2xl border border-white/10">
+                    <label class="text-[10px] text-gray-500 font-bold block mb-2 uppercase text-center tracking-widest">Pilih Kuantiti</label>
+                    <div class="flex items-center justify-between bg-black/40 rounded-xl p-2 border border-white/5">
+                        <button type="button" onclick="changeOrderQty(-1)" class="w-10 h-10 bg-red-600/20 text-red-500 rounded-lg flex items-center justify-center text-xl font-bold">-</button>
+                        <input type="number" id="order-qty" value="1" min="1" class="bg-transparent text-center text-white font-black text-2xl w-20 outline-none" readonly>
+                        <button type="button" onclick="changeOrderQty(1)" class="w-10 h-10 bg-red-600/20 text-red-500 rounded-lg flex items-center justify-center text-xl font-bold">+</button>
                     </div>
-                </div>`;
-            document.getElementById('orderModal').classList.remove('hidden');
-        }
+                </div>
+                ` : `
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                    <label class="text-[10px] text-gray-500 font-black uppercase">UserName/InGameName</label>
+                    <input type="text" id="orderUser" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white outline-none focus:border-red-500" placeholder="PakKarim9008">
+                </div>
+                    <div>
+                        <label class="text-[10px] text-gray-500 font-black uppercase">Robux</label>
+                        <input type="number" id="orderRobux" value="0" oninput="updatePrice(this.value)" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white outline-none focus:border-red-500">
+                    </div>
+                    <div>
+                        <label class="text-[10px] text-gray-500 font-black uppercase">Price RM</label>
+                        <input type="text" id="orderPrice" value="0.00" readonly class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-gray-400 font-bold">
+                    </div>
+                </div>
+                <div>
+                    <label class="text-[10px] text-gray-500 font-black uppercase">Map Name</label>
+                    <input type="text" id="orderMap" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white outline-none focus:border-red-500" placeholder="Fish It, Blox Fruit">
+                </div>
+                `}
+
+                <div>
+                    <label class="text-[10px] text-gray-500 font-black uppercase">Nota Tambahan</label>
+                    <input type="text" id="orderItem" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white outline-none focus:border-red-500" placeholder="Contoh: Skin Rod, VIP PASS">
+                </div>
+
+                <button onclick="sendWhatsApp('${product.name}', '${product.type}')" class="w-full bg-green-600 py-4 rounded-2xl font-black text-white uppercase tracking-widest mt-2 shadow-lg shadow-green-600/20">Hantar Order</button>
+                <button onclick="closeOrderModal()" class="w-full text-gray-500 text-[10px] font-bold uppercase mt-2">Batal</button>
+            </div>
+        </div>`;
+    
+    document.getElementById('orderModal').classList.remove('hidden');
+}
+
+// Fungsi Kuantiti
+function changeOrderQty(amt) {
+    const input = document.getElementById('order-qty');
+    if(!input) return;
+    let val = parseInt(input.value) + amt;
+    if (val < 1) val = 1;
+    input.value = val;
+}
 
         function updatePrice(val) { document.getElementById('orderPrice').value = (val * RATE_PER_ROBUX).toFixed(2); }
-        function sendWhatsApp(itemName) {
+        function sendWhatsApp(itemName, type) {
+        const user = document.getElementById('orderUser').value;
+        const itemNote = document.getElementById('orderItem').value;
+            let message = `Halo KZMartMY! Saya nak order:%0A%0A📦 Produk: *${itemName}*%0A👤 Username: ${user}`;
+
+        if (type === "Form") {
         const user = document.getElementById('orderUser').value;
         const robux = document.getElementById('orderRobux').value;
         const price = document.getElementById('orderPrice').value;
         const item = document.getElementById('orderItem').value;
         const map = document.getElementById('orderMap').value;
+        } else {
+        const qty = document.getElementById('order-qty').value;
+        message += `%0A🔢 Kuantiti: *${qty}*`;
+    }
 
         if(!user || !map) {
             alert("Sila masukkan Username , Nama Item dan Nama Map!");
