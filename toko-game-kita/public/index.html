@@ -224,11 +224,8 @@ select#categorySelect option {
         </div>
     </div>
 
-            <input type="text" id="normal-note" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white mb-4 outline-none focus:border-green-500 text-sm" placeholder="Nota / ID (Optional)...">
-            <button onclick="sendNormalOrder()" class="w-full bg-green-600 py-4 rounded-2xl font-black text-white uppercase tracking-widest shadow-lg shadow-green-600/20">Hantar Order</button>
-            <button onclick="closeNormalModal()" class="w-full text-gray-500 text-[10px] font-bold uppercase mt-4 text-center">Batal</button>
+             <div id="orderModal" class="fixed inset-0 bg-black/95 z-[200] hidden flex items-center justify-center p-4 backdrop-blur-md">
         </div>
-    </div>
         
         <audio id="clickSound" preload="auto">
     <source src="click-sound.mp3" type="audio/mpeg">
@@ -377,10 +374,10 @@ function openVariantModal(id) {
 }
 
 
-        function openQtyModal(itemName, amount = 0, isRate = false) {
+        function openOrderModal(itemName, amount = 0, isRate = false) {
             closeVariantModal();
             const initialPrice = isRate ? (amount * RATE_PER_ROBUX).toFixed(2) : amount.toFixed(2);
-            document.getElementById('formModal').innerHTML = `
+            document.getElementById('orderModal').innerHTML = `
                 <div class="bg-[#0f1021] w-full max-w-sm rounded-3xl p-6 border border-white/10 shadow-2xl overflow-y-auto max-h-[90vh]">
                     <div class="mb-6 bg-white p-3 rounded-2xl"><img src="qr-pay.jpg.jpg" class="w-32 h-32 mx-auto"></div>
                     <div class="space-y-4 text-left">
@@ -397,10 +394,10 @@ function openVariantModal(id) {
                         <div><label class="text-[10px] text-gray-500 font-black uppercase">Map Name</label>
                         <input type="text" id="orderMap" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white outline-none focus:border-red-500" placeholder="Fish It, Blox Fruit"></div>
                         <button onclick="sendWhatsApp('${itemName}')" class="w-full bg-green-600 py-4 rounded-2xl font-black text-white uppercase tracking-widest mt-2">Hantar Order</button>
-                        <button onclick="closeFormModal()" class="w-full text-gray-500 text-[10px] font-bold uppercase mt-2">Batal</button>
+                        <button onclick="closeOrderModal()" class="w-full text-gray-500 text-[10px] font-bold uppercase mt-2">Batal</button>
                     </div>
                 </div>`;
-            document.getElementById('formModal').classList.remove('hidden');
+            document.getElementById('orderModal').classList.remove('hidden');
         }
 
         function updatePrice(val) { document.getElementById('orderPrice').value = (val * RATE_PER_ROBUX).toFixed(2); }
@@ -427,7 +424,7 @@ function openVariantModal(id) {
         
         window.open(`https://wa.me/60167481645?text=${msg}`);
     }
-        function closeFormModal() { document.getElementById('formModal').classList.add('hidden'); }
+        function closeOrderModal() { document.getElementById('orderModal').classList.add('hidden'); }
         function closeVariantModal() { document.getElementById('variantModal').classList.add('hidden'); }
 
         let selectedRating = 0;
