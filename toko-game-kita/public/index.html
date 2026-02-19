@@ -638,6 +638,60 @@ function syncRobuxStock() {
     </div>
 </div>
 
+<script type="module">
+
+  // Import Firebase apps
+
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+
+  import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+
+
+  // TODO: Gantikan dengan config dari Firebase Console anda
+
+  const firebaseConfig = {
+
+    apiKey: "AIzaSyAzqZNdN2Hq6gq7CqKsBRE7isgXZVFQChU",
+
+    authDomain: "kzmart-auth.firebaseapp.com",
+
+    databaseURL: "https://your-project-default-rtdb.firebaseio.com",
+
+    projectId: "kzmart-auth",
+
+    storageBucket: "kzmart-auth.firebasestorage.app",
+
+    messagingSenderId: "1084515236820",
+
+    appId: "1:1084515236820:web:582cb2a5cdb5181b5f9441"
+
+  };
+
+
+
+  // Initialize Firebase
+
+  const app = initializeApp(firebaseConfig);
+
+  const db = getDatabase(app);
+
+
+
+  // Tarik data dari path 'stats/total_visits'
+
+  const visitRef = ref(db, 'stats/total_visits');
+
+  onValue(visitRef, (snapshot) => {
+
+    const data = snapshot.val();
+
+    document.getElementById('total-visits-count').innerText = data.toLocaleString();
+
+  });
+
+</script>
+
 </body>
 </footer>
 </html>
