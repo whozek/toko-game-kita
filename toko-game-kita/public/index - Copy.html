@@ -331,7 +331,7 @@ async function displayGames(filter = 'ALL') {
             if (game.type === "Digital") {
                 action = `window.open('https://wa.me/60167481645?text=Nak%20beli%20${game.name}')`;
             } else {
-                action = `openNormalModal('${game.name}')`;
+                action = `openOrderModal('${game.name}')`;
             }
         }
 
@@ -361,7 +361,7 @@ function openVariantModal(id) {
         if (product.type === "Digital") {
             clickAction = `window.open('https://wa.me/60167481645?text=Nak%20beli%20${v.name}%20Harga:%20RM${pDisplay}')`;
         } else {
-            clickAction = `openNormalModal('${v.name}', ${v.price}, ${v.isRate})`;
+            clickAction = `openOrderModal('${v.name}', ${v.price}, ${v.isRate})`;
         }
 
         return `
@@ -375,10 +375,10 @@ function openVariantModal(id) {
 }
 
 
-        function openNormalModal(itemName, amount = 0, isRate = false) {
+        function openOrderModal(itemName, amount = 0, isRate = false) {
             closeVariantModal();
             const initialPrice = isRate ? (amount * RATE_PER_ROBUX).toFixed(2) : amount.toFixed(2);
-            document.getElementById('orderNormalModal').innerHTML = `
+            document.getElementById('orderModal').innerHTML = `
                 <div class="bg-[#0f1021] w-full max-w-sm rounded-3xl p-6 border border-white/10 shadow-2xl overflow-y-auto max-h-[90vh]">
                     <div class="mb-6 bg-white p-3 rounded-2xl"><img src="qr-pay.jpg.jpg" class="w-32 h-32 mx-auto"></div>
                     <div class="space-y-4 text-left">
@@ -395,10 +395,10 @@ function openVariantModal(id) {
                         <div><label class="text-[10px] text-gray-500 font-black uppercase">Map Name</label>
                         <input type="text" id="orderMap" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white outline-none focus:border-red-500" placeholder="Fish It, Blox Fruit"></div>
                         <button onclick="sendWhatsApp('${itemName}')" class="w-full bg-green-600 py-4 rounded-2xl font-black text-white uppercase tracking-widest mt-2">Hantar Order</button>
-                        <button onclick="closeNormalModal()" class="w-full text-gray-500 text-[10px] font-bold uppercase mt-2">Batal</button>
+                        <button onclick="closeOrderModal()" class="w-full text-gray-500 text-[10px] font-bold uppercase mt-2">Batal</button>
                     </div>
                 </div>`;
-            document.getElementById('normalModal').classList.remove('hidden');
+            document.getElementById('orderModal').classList.remove('hidden');
         }
 
         function updatePrice(val) { document.getElementById('orderPrice').value = (val * RATE_PER_ROBUX).toFixed(2); }
@@ -425,7 +425,7 @@ function openVariantModal(id) {
         
         window.open(`https://wa.me/60167481645?text=${msg}`);
     }
-        function closeNormalModal() { document.getElementById('NormalModal').classList.add('hidden'); }
+        function closeOrderModal() { document.getElementById('orderModal').classList.add('hidden'); }
         function closeVariantModal() { document.getElementById('variantModal').classList.add('hidden'); }
 
         let selectedRating = 0;
