@@ -54,6 +54,7 @@ const allProducts = [
         isVariant: false,
         type: "Digital",
         isRate: false,
+        price: 0.30,
         allowQuantity: true
     },
     {
@@ -65,6 +66,7 @@ const allProducts = [
         isVariant: false,
         type: "Digital",
         isRate: false,
+        price: 0.25,
         allowQuantity: true
     }
 ];
