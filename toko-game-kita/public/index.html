@@ -356,12 +356,13 @@ function openVariantModal(id) {
 }
 
 
-        function openOrderModal(itemName, amount = 0, isRate = false) {
+        // Gantikan fungsi sedia ada dalam index.html
+function openOrderModal(itemName, amount = 0, isRate = false) {
     closeVariantModal();
     
-    // Cari data produk dalam product.js
-    const product = allProducts.find(p => p.name === itemName || (p.variants && p.variants.some(v => v.name === itemName)));
-    const canChangeQty = product && product.allowQuantity === true;
+    // Cari data produk untuk semak jika ia benarkan kuantiti manual
+    const product = window.allProducts.find(p => p.name === itemName);
+    const isQtyProduct = product && product.allowQuantity === true;
     
     // Set harga awal
     let initialPrice = isRate ? (amount * RATE_PER_ROBUX) : amount;
@@ -377,11 +378,10 @@ function openVariantModal(id) {
                 
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="text-[10px] text-gray-500 font-black uppercase">${canChangeQty ? 'Quantity' : 'Robux/Amount'}</label>
+                        <label class="text-[10px] text-gray-500 font-black uppercase">${isQtyProduct ? 'Quantity' : 'Robux/Amount'}</label>
                         <input type="number" id="orderRobux" 
-                            value="${canChangeQty ? 1 : amount}" 
-                            ${(!canChangeQty && !isRate) ? 'readonly' : ''} 
-                            oninput="updatePrice(this.value, ${amount}, ${isRate}, ${canChangeQty})" 
+                            value="${isQtyProduct ? 1 : amount}" 
+                            oninput="updatePrice(this.value, ${amount}, ${isRate}, ${isQtyProduct})" 
                             class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white outline-none focus:border-red-500">
                     </div>
                     <div>
@@ -408,19 +408,17 @@ function openVariantModal(id) {
 }
 
 
-        function updatePrice(val, baseAmount, isRate, canChangeQty) {
+        // Tambah fungsi pengiraan harga yang baru
+function updatePrice(val, baseAmount, isRate, isQtyProduct) {
     let finalPrice = 0;
-    let quantity = parseFloat(val) || 0;
+    let inputVal = parseFloat(val) || 0;
 
-    if (canChangeQty) {
-        // Jika produk boleh kuantiti (cth: Tumbal), Harga = Kuantiti * Harga Asal
-        finalPrice = quantity * baseAmount;
+    if (isQtyProduct) {
+        finalPrice = inputVal * baseAmount; // Kuantiti * Harga Per 1
     } else if (isRate) {
-        // Jika produk Robux, Harga = Jumlah Robux * Rate
-        finalPrice = quantity * RATE_PER_ROBUX;
+        finalPrice = inputVal * RATE_PER_ROBUX; // Robux * Rate
     } else {
-        // Produk harga tetap
-        finalPrice = baseAmount;
+        finalPrice = baseAmount; // Harga tetap
     }
     
     document.getElementById('orderPrice').value = finalPrice.toFixed(2);
