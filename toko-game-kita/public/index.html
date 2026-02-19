@@ -320,11 +320,6 @@ async function displayGames(filter = 'ALL') {
 
     list.innerHTML = ""; // Kosongkan list dulu sebelum lukis baru
 
-    // Contoh dalam loop displayGames
-const card = `
-    <div onclick="showProductDetail('${product.name}')" class="cursor-pointer ...">
-        </div>
-`;
 
     for (const game of filtered) {
         let stockText = "Checking...";
@@ -367,6 +362,30 @@ const card = `
                 </button>
             </div>`;
     }
+    filtered.forEach(product => {
+    const div = document.createElement('div');
+    
+    // 1. TAMBAH TRIGGER KLIK PADA KAD (DIV)
+    div.className = "bg-[#16172d] rounded-3xl p-3 border border-white/5 hover:border-red-500/50 transition-all group cursor-pointer relative";
+    div.onclick = () => showProductDetail(product.name); 
+
+    div.innerHTML = `
+        <div class="relative mb-3 overflow-hidden rounded-2xl aspect-square">
+            <img src="${product.img}" class="w-full h-full object-cover group-hover:scale-110 transition-all duration-500">
+            <div class="absolute top-2 right-2 bg-black/60 backdrop-blur-md px-2 py-1 rounded-lg border border-white/10">
+                <p class="text-[10px] text-red-500 font-black italic">RM ${product.price || 'RATE'}</p>
+            </div>
+        </div>
+        <h3 class="text-white font-bold text-[11px] mb-3 italic uppercase tracking-tighter line-clamp-1">${product.name}</h3>
+        
+        <button onclick="event.stopPropagation(); handleBuy('${product.name}')" 
+            class="w-full bg-red-600 hover:bg-red-700 text-white font-black py-2 rounded-xl text-[10px] uppercase tracking-wider transition-all shadow-lg shadow-red-600/20 flex items-center justify-center space-x-2">
+            <i class="fas fa-shopping-cart text-[9px]"></i>
+            <span>Buy Now</span>
+        </button>
+    `;
+    container.appendChild(div);
+});
 }
 
 // --- 2. Paparan Dalam Modal Varian ---
