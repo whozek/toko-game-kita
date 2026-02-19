@@ -377,7 +377,7 @@ function openVariantModal(id) {
 }
 
 
-        function openFormModal(itemName, amount = 0, isRate = false) {
+        function openQtyModal(itemName, amount = 0, isRate = false) {
             closeVariantModal();
             const initialPrice = isRate ? (amount * RATE_PER_ROBUX).toFixed(2) : amount.toFixed(2);
             document.getElementById('formModal').innerHTML = `
