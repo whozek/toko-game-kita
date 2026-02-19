@@ -286,7 +286,9 @@ async function displayGames(filter = 'ALL') {
             const stockDoc = await db.collection("stocks").doc(game.id.toString()).get();
             if (stockDoc.exists) {
                 const qty = stockDoc.data().currentStock;
+                const prc = stockDoc.data().currentPrice;
                 stockText = `Stock: ${qty}`;
+                stockText = `Price ${prc}`;
                 stockColor = qty > 0 ? "text-green-500" : "text-red-500";
             } else {
                 stockText = "Available";
