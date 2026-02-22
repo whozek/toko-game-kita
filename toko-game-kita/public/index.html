@@ -360,15 +360,16 @@ if (product.type === "Digital") {
         // Gantikan fungsi sedia ada dalam index.html
 function openOrderModal(itemName, amount = 0, isRate = false) {
     closeVariantModal();
-    const product = window.allProducts.find(p => p.name === itemName || (p.variants && p.variants.some(v => v.name === itemName)));
-    const isQtyProduct = product && product.allowQuantity === true;
     
-    // Set harga awal masa modal baru buka
+    // Set harga awal masa modal baru dibuka
     let initialPrice = isRate ? (amount * RATE_PER_ROBUX) : amount;
     
     document.getElementById('orderModal').innerHTML = `
         <div class="bg-[#0f1021] w-full max-w-sm rounded-3xl p-6 border border-white/10 shadow-2xl overflow-y-auto max-h-[90vh]">
-            <div class="mb-6 bg-white p-3 rounded-2xl"><img src="qr-pay.jpg.jpg" class="w-32 h-32 mx-auto"></div>
+            <div class="mb-6 bg-white p-3 rounded-2xl">
+                <img src="qr-pay.jpg.jpg" class="w-32 h-32 mx-auto">
+            </div>
+            
             <div class="space-y-4 text-left">
                 <div>
                     <label class="text-[10px] text-gray-500 font-black uppercase">Username</label>
@@ -377,10 +378,10 @@ function openOrderModal(itemName, amount = 0, isRate = false) {
                 
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="text-[10px] text-gray-500 font-black uppercase">${isQtyProduct ? 'Quantity' : 'Robux/Amount'}</label>
+                        <label class="text-[10px] text-gray-500 font-black uppercase">Robux/Amount</label>
                         <input type="number" id="orderRobux" 
                             value="${amount}" 
-                            oninput="updatePrice(this.value, ${amount}, ${isRate}, ${isQtyProduct})" 
+                            oninput="updatePrice(this.value, ${amount}, ${isRate})" 
                             class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white outline-none focus:border-red-500">
                     </div>
                     <div>
@@ -403,42 +404,37 @@ function openOrderModal(itemName, amount = 0, isRate = false) {
                 <button onclick="closeOrderModal()" class="w-full text-gray-500 text-[10px] font-bold uppercase mt-2">Batal</button>
             </div>
         </div>`;
-    document.getElementById('orderModal').classList.remove('hidden');
+    [span_6](start_span)document.getElementById('orderModal').classList.remove('hidden');[span_6](end_span)
 }
+
 
 
 // Ganti fungsi updatePrice lama dengan yang ini (Nama baru untuk elak konflik)
-function updatePrice(val, baseAmount, isRate, isQtyProduct) {
+function updatePrice(val, baseAmount, isRate) {
     let finalPrice = 0;
     let inputVal = parseFloat(val) || 0;
 
-    if (isQtyProduct) {
-        // Jika produk jenis kuantiti (cth: Tumbal), darab dengan harga asas unit
-        finalPrice = inputVal * baseAmount;
-    } else if (isRate) {
-        // Jika produk jenis Robux, darab dengan RATE_PER_ROBUX (0.023)
-        finalPrice = inputVal * RATE_PER_ROBUX;
+    if (isRate) {
+        // Jika produk jenis Robux: Jumlah x 0.023
+        [span_8](start_span)finalPrice = inputVal * RATE_PER_ROBUX;[span_8](end_span)
     } else {
-        // Jika harga tetap
-        finalPrice = baseAmount;
+        // Jika produk harga tetap (Fixed Price)
+        [span_9](start_span)finalPrice = baseAmount;[span_9](end_span)
     }
     
-    document.getElementById('orderPrice').value = finalPrice.toFixed(2);
+    [span_10](start_span)document.getElementById('orderPrice').value = finalPrice.toFixed(2);[span_10](end_span)
 }
 
+
         function sendWhatsApp(itemName) {
-    const user = document.getElementById('orderUser').value;
-    const qtyOrRobux = document.getElementById('orderRobux').value;
+    [span_13](start_span)const user = document.getElementById('orderUser').value;[span_13](end_span)
+    [span_14](start_span)const qtyOrRobux = document.getElementById('orderRobux').value;[span_14](end_span)
     const price = document.getElementById('orderPrice').value;
     const item = document.getElementById('orderItem').value;
     const map = document.getElementById('orderMap').value;
 
-    // Cari data produk untuk menentukan label (Kuantiti atau Robux)
-    const product = window.allProducts.find(p => p.name === itemName || p.variants?.some(v => v.name === itemName));
-    const labelType = (product && product.allowQuantity) ? "Kuantiti" : "Jumlah Robux";
-
     if(!user || !map) {
-        alert("Sila masukkan Username dan Nama Map!");
+        [span_15](start_span)alert("Sila masukkan Username dan Nama Map!");[span_15](end_span)
         return;
     }
 
@@ -447,14 +443,14 @@ function updatePrice(val, baseAmount, isRate, isQtyProduct) {
                 `--------------------------%0A` +
                 `Produk: ${itemName}%0A` +
                 `Username: ${user}%0A` +
-                `${labelType}: ${qtyOrRobux}%0A` +
-                `Total Harga: RM${price}%0A` +
+                `Jumlah Robux: ${qtyOrRobux}%0A` + 
+                [span_16](start_span)`Total Harga: RM${price}%0A` +[span_16](end_span)
                 `Item Detail: ${item}%0A` +
                 `Map: ${map}%0A` +
                 `--------------------------`;
-    
-    window.open(`https://wa.me/60167481645?text=${msg}`);
+    [span_17](start_span)window.open(`https://wa.me/60167481645?text=${msg}`);[span_17](end_span)
 }
+
         function closeOrderModal() { document.getElementById('orderModal').classList.add('hidden'); }
         function closeVariantModal() { document.getElementById('variantModal').classList.add('hidden'); }
 
