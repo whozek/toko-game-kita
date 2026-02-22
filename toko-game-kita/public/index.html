@@ -379,10 +379,12 @@ function openOrderModal(itemName, amount = 0, isRate = false) {
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="text-[10px] text-gray-500 font-black uppercase">${isQtyProduct ? 'Quantity' : 'Robux/Amount'}</label>
-                        <input type="number" id="orderRobux" 
-                            value="${isQtyProduct ? 1 : amount}" 
-                            oninput="updatePrice(this.value, ${amount}, ${isRate}, ${isQtyProduct})" 
-                            class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white outline-none focus:border-red-500">
+                        // CARI BARIS INI:
+<input type="number" id="orderRobux" 
+    value="${isQtyProduct ? 1 : amount}" 
+    oninput="updatePrice(this.value, ${amount}, ${isRate}, ${isQtyProduct})" 
+    class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white outline-none focus:border-red-500">
+
                     </div>
                     <div>
                         <label class="text-[10px] text-gray-500 font-black uppercase">Price RM</label>
