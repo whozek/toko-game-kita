@@ -359,14 +359,11 @@ function openVariantModal(id) {
         // Gantikan fungsi sedia ada dalam index.html
 function openOrderModal(itemName, amount = 0, isRate = false) {
     closeVariantModal();
-    
-    // Check product info from product.js
     const product = window.allProducts.find(p => p.name === itemName || (p.variants && p.variants.some(v => v.name === itemName)));
     const isQtyProduct = product && product.allowQuantity === true;
     
-    // Definisi Rate di dalam fungsi supaya selamat
-    const CURRENT_RATE = 0.023; 
-    let initialPrice = isRate ? (amount * CURRENT_RATE) : amount;
+    // Set harga awal masa modal baru buka
+    let initialPrice = isRate ? (amount * RATE_PER_ROBUX) : amount;
     
     document.getElementById('orderModal').innerHTML = `
         <div class="bg-[#0f1021] w-full max-w-sm rounded-3xl p-6 border border-white/10 shadow-2xl overflow-y-auto max-h-[90vh]">
@@ -378,15 +375,13 @@ function openOrderModal(itemName, amount = 0, isRate = false) {
                 </div>
                 
                 <div class="grid grid-cols-2 gap-3">
-                    
-<div>
-    <label class="text-[10px] text-gray-500 font-black uppercase">Robux/Amount</label>
-    <input type="number" id="orderRobux" 
-        value="${amount}" 
-        oninput="document.getElementById('orderPrice').value = (this.value * ${isRate ? 'RATE_PER_ROBUX' : 1}).toFixed(2)" 
-        class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white outline-none focus:border-red-500">
-</div>
-
+                    <div>
+                        <label class="text-[10px] text-gray-500 font-black uppercase">${isQtyProduct ? 'Quantity' : 'Robux/Amount'}</label>
+                        <input type="number" id="orderRobux" 
+                            value="${amount}" 
+                            oninput="updatePrice(this.value, ${amount}, ${isRate}, ${isQtyProduct})" 
+                            class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white outline-none focus:border-red-500">
+                    </div>
                     <div>
                         <label class="text-[10px] text-gray-500 font-black uppercase">Price RM</label>
                         <input type="text" id="orderPrice" value="${initialPrice.toFixed(2)}" readonly class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-gray-400 font-bold">
@@ -410,27 +405,25 @@ function openOrderModal(itemName, amount = 0, isRate = false) {
     document.getElementById('orderModal').classList.remove('hidden');
 }
 
+
 // Ganti fungsi updatePrice lama dengan yang ini (Nama baru untuk elak konflik)
-function updatePrice(val, isRate) {
-    const priceField = document.getElementById('orderPrice');
-    if (!priceField) return;
-
-    let inputVal = parseFloat(val) || 0;
+function updatePrice(val, baseAmount, isRate, isQtyProduct) {
     let finalPrice = 0;
+    let inputVal = parseFloat(val) || 0;
 
-    if (isRate) {
-        // Jika produk Robux, darab dengan rate
+    if (isQtyProduct) {
+        // Jika produk jenis kuantiti (cth: Tumbal), darab dengan harga asas unit
+        finalPrice = inputVal * baseAmount;
+    } else if (isRate) {
+        // Jika produk jenis Robux, darab dengan RATE_PER_ROBUX (0.023)
         finalPrice = inputVal * RATE_PER_ROBUX;
     } else {
-        // Jika produk tetap (seperti Redfinger), kekalkan harga input
-        finalPrice = inputVal;
+        // Jika harga tetap
+        finalPrice = baseAmount;
     }
-
-    priceField.value = finalPrice.toFixed(2);
+    
+    document.getElementById('orderPrice').value = finalPrice.toFixed(2);
 }
-
-
-
 
         function sendWhatsApp(itemName) {
     const user = document.getElementById('orderUser').value;
