@@ -378,13 +378,15 @@ function openOrderModal(itemName, amount = 0, isRate = false) {
                 </div>
                 
                 <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="text-[10px] text-gray-500 font-black uppercase">${isQtyProduct ? 'Quantity' : 'Robux/Amount'}</label>
-                        <input type="number" id="orderRobux" 
-                            value="${isQtyProduct ? 1 : amount}" 
-                            oninput="updatePriceManual(this.value, ${amount}, ${isRate}, ${isQtyProduct})" 
-                            class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white outline-none focus:border-red-500">
-                    </div>
+                    
+<div>
+    <label class="text-[10px] text-gray-500 font-black uppercase">Robux/Amount</label>
+    <input type="number" id="orderRobux" 
+        value="${amount}" 
+        oninput="document.getElementById('orderPrice').value = (this.value * ${isRate ? 'RATE_PER_ROBUX' : 1}).toFixed(2)" 
+        class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white outline-none focus:border-red-500">
+</div>
+
                     <div>
                         <label class="text-[10px] text-gray-500 font-black uppercase">Price RM</label>
                         <input type="text" id="orderPrice" value="${initialPrice.toFixed(2)}" readonly class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-gray-400 font-bold">
@@ -409,24 +411,24 @@ function openOrderModal(itemName, amount = 0, isRate = false) {
 }
 
 // Ganti fungsi updatePrice lama dengan yang ini (Nama baru untuk elak konflik)
-function updatePriceManual(val, baseAmount, isRate, isQtyProduct) {
-    const CURRENT_RATE = 0.023;
-    let finalPrice = 0;
-    let inputVal = parseFloat(val) || 0;
-
-    if (isQtyProduct) {
-        finalPrice = inputVal * baseAmount;
-    } else if (isRate) {
-        finalPrice = inputVal * CURRENT_RATE;
-    } else {
-        finalPrice = baseAmount;
-    }
-    
+function updatePrice(val, isRate) {
     const priceField = document.getElementById('orderPrice');
-    if(priceField) {
-        priceField.value = finalPrice.toFixed(2);
+    if (!priceField) return;
+
+    let inputVal = parseFloat(val) || 0;
+    let finalPrice = 0;
+
+    if (isRate) {
+        // Jika produk Robux, darab dengan rate
+        finalPrice = inputVal * RATE_PER_ROBUX;
+    } else {
+        // Jika produk tetap (seperti Redfinger), kekalkan harga input
+        finalPrice = inputVal;
     }
+
+    priceField.value = finalPrice.toFixed(2);
 }
+
 
 
 
