@@ -337,13 +337,14 @@ function openVariantModal(id) {
     document.getElementById('variantList').innerHTML = product.variants.map(v => {
         const pDisplay = v.isRate ? (v.price * RATE_PER_ROBUX).toFixed(2) : v.price.toFixed(2);
         
-        let clickAction;
-        // Tapis di sini: Jika type produk asal adalah Digital, jangan buka form
-        if (product.type === "Digital") {
-            clickAction = `window.open('https://wa.me/60167481645?text=Nak%20beli%20${v.name}%20Harga:%20RM${pDisplay}')`;
-        } else {
-            clickAction = `openOrderModal('${v.name}', ${v.price}, ${v.isRate})`;
-        }
+        // Cari baris ini di dalam fungsi openVariantModal
+let clickAction;
+if (product.type === "Digital") {
+    clickAction = `window.open('https://wa.me/60167481645?text=Nak%20beli%20${v.name}%20Harga:%20RM${pDisplay}')`;
+} else {
+    [span_2](start_span)// PASTIKAN v.isRate dihantar di sini[span_2](end_span)
+    clickAction = `openOrderModal('${v.name}', ${v.price}, ${v.isRate})`;
+}
 
         return `
             <button onclick="${clickAction}" class="w-full flex justify-between items-center bg-white/5 border border-white/5 p-4 rounded-2xl text-white hover:border-red-500 transition-all">
