@@ -377,15 +377,14 @@ function openOrderModal(itemName, amount = 0, isRate = false) {
                 </div>
                 
                 <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="text-[10px] text-gray-500 font-black uppercase">${isQtyProduct ? 'Quantity' : 'Robux/Amount'}</label>
-                        // CARI BARIS INI:
-<input type="number" id="orderRobux" 
-    value="${isQtyProduct ? 1 : amount}" 
-    oninput="updatePrice(this.value, ${amount}, ${isRate}, ${isQtyProduct})" 
-    class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white outline-none focus:border-red-500">
+<div>
+    <label class="text-[10px] text-gray-500 font-black uppercase">${isQtyProduct ? 'Quantity' : 'Robux/Amount'}</label>
+    <input type="number" id="orderRobux" 
+        value="${isQtyProduct ? 1 : amount}" 
+        oninput="updatePrice(this.value, ${amount}, ${isRate}, ${isQtyProduct})" 
+        class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-white outline-none focus:border-red-500">
+</div>
 
-                    </div>
                     <div>
                         <label class="text-[10px] text-gray-500 font-black uppercase">Price RM</label>
                         <input type="text" id="orderPrice" value="${initialPrice.toFixed(2)}" readonly class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-gray-400 font-bold">
@@ -417,18 +416,21 @@ function updatePrice(val, baseAmount, isRate, isQtyProduct) {
     let inputVal = parseFloat(val) || 0;
 
     if (isQtyProduct) {
-        // Untuk Tumbal: Kuantiti x Harga Per Unit (0.30)
+        // Tumbal: Kuantiti * 0.30
         finalPrice = inputVal * baseAmount;
     } else if (isRate) {
-        // Untuk Robux: Jumlah Robux x Rate (0.023)
+        // Robux: Jumlah Robux * 0.023
+        // Pastikan const RATE_PER_ROBUX = 0.023; ada di atas sekali
         finalPrice = inputVal * RATE_PER_ROBUX;
     } else {
-        // Untuk harga tetap (Fixed Price)
+        // Harga tetap (Varian)
         finalPrice = baseAmount;
     }
     
+    // Kemaskini kotak harga RM
     document.getElementById('orderPrice').value = finalPrice.toFixed(2);
 }
+
 
 
         function sendWhatsApp(itemName) {
