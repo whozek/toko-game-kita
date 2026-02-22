@@ -360,11 +360,11 @@ function openVariantModal(id) {
 function openOrderModal(itemName, amount = 0, isRate = false) {
     closeVariantModal();
     
-    // Cari data produk untuk semak jika ia benarkan kuantiti manual
-    const product = window.allProducts.find(p => p.name === itemName);
+    // Cari data produk dalam product.js untuk check allowQuantity
+    const product = window.allProducts.find(p => p.name === itemName || (p.variants && p.variants.some(v => v.name === itemName)));
     const isQtyProduct = product && product.allowQuantity === true;
     
-    // Set harga awal
+    // Set harga awal masa modal baru buka
     let initialPrice = isRate ? (amount * RATE_PER_ROBUX) : amount;
     
     document.getElementById('orderModal').innerHTML = `
@@ -408,21 +408,26 @@ function openOrderModal(itemName, amount = 0, isRate = false) {
 }
 
 
+
         // Tambah fungsi pengiraan harga yang baru
 function updatePrice(val, baseAmount, isRate, isQtyProduct) {
     let finalPrice = 0;
     let inputVal = parseFloat(val) || 0;
 
     if (isQtyProduct) {
-        finalPrice = inputVal * baseAmount; // Kuantiti * Harga Per 1
+        // Untuk Tumbal: Kuantiti x Harga Per Unit (0.30)
+        finalPrice = inputVal * baseAmount;
     } else if (isRate) {
-        finalPrice = inputVal * RATE_PER_ROBUX; // Robux * Rate
+        // Untuk Robux: Jumlah Robux x Rate (0.023)
+        finalPrice = inputVal * RATE_PER_ROBUX;
     } else {
-        finalPrice = baseAmount; // Harga tetap
+        // Untuk harga tetap (Fixed Price)
+        finalPrice = baseAmount;
     }
     
     document.getElementById('orderPrice').value = finalPrice.toFixed(2);
 }
+
 
         function sendWhatsApp(itemName) {
     const user = document.getElementById('orderUser').value;
