@@ -411,18 +411,18 @@ function openOrderModal(itemName, amount = 0, isRate = false) {
 
 // Ganti fungsi updatePrice lama dengan yang ini (Nama baru untuk elak konflik)
 function updatePrice(val, baseAmount, isRate) {
-    let finalPrice = 0;
     let inputVal = parseFloat(val) || 0;
+    let finalPrice = 0;
 
     if (isRate) {
-        // Jika produk jenis Robux: Jumlah x 0.023
-        [span_8](start_span)finalPrice = inputVal * RATE_PER_ROBUX;[span_8](end_span)
+        // Jika produk ini menggunakan kadar (rate), ia akan darab 0.023
+        finalPrice = inputVal * RATE_PER_ROBUX;
     } else {
-        // Jika produk harga tetap (Fixed Price)
-        [span_9](start_span)finalPrice = baseAmount;[span_9](end_span)
+        // Jika tidak, ia guna harga asal
+        finalPrice = baseAmount;
     }
     
-    [span_10](start_span)document.getElementById('orderPrice').value = finalPrice.toFixed(2);[span_10](end_span)
+    document.getElementById('orderPrice').value = finalPrice.toFixed(2);
 }
 
 
